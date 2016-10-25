@@ -7,6 +7,11 @@
 	<classpathentry kind="src" path="generated/sablecc"/>
 	<classpathentry kind="src" path="generated/singletons"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/guava-18.0.jar" sourcepath="libs/src/guava-18.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/guava-18.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/jasmin"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/heros"/>
 	<classpathentry kind="lib" path="libs/polyglot.jar"/>
@@ -19,7 +24,15 @@
 	<classpathentry kind="lib" path="libs/powermock-mockito-1.6.1-full.jar"/>
 	<classpathentry kind="lib" path="libs/jboss-common-core-2.5.0.Final.jar"/>
 	<classpathentry kind="lib" path="libs/asm-debug-all-5.1.jar"/>
-	<classpathentry kind="lib" path="libs/dexlib2-2.2b3-55c33ebb.jar"/>
-	<classpathentry kind="lib" path="libs/util-2.2b3-55c33ebb.jar"/>
+	<classpathentry kind="lib" path="libs/dexlib2-2.2b3-55c33ebb.jar" sourcepath="libs/src/dexlib2-2.2b3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/dexlib2-2.2b3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/util-2.2b3-55c33ebb.jar" sourcepath="libs/src/util-2.2b3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/util-2.2b3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
