@@ -24,14 +24,14 @@
 	<classpathentry kind="lib" path="libs/powermock-mockito-1.6.1-full.jar"/>
 	<classpathentry kind="lib" path="libs/jboss-common-core-2.5.0.Final.jar"/>
 	<classpathentry kind="lib" path="libs/asm-debug-all-5.1.jar"/>
-	<classpathentry kind="lib" path="libs/dexlib2-2.2b3-55c33ebb.jar" sourcepath="libs/src/dexlib2-2.2b3-sources.jar">
+	<classpathentry kind="lib" path="libs/dexlib2-2.2b4-a0ccd94b.jar" sourcepath="libs/src/dexlib2-2.2b4-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/dexlib2-2.2b3-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/dexlib2-2.2b4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/util-2.2b3-55c33ebb.jar" sourcepath="libs/src/util-2.2b3-sources.jar">
+	<classpathentry kind="lib" path="libs/util-2.2b4-a0ccd94b.jar" sourcepath="libs/src/util-2.2b4-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/util-2.2b3-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/util-2.2b4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="classes"/>
