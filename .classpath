@@ -7,11 +7,6 @@
 	<classpathentry kind="src" path="generated/sablecc"/>
 	<classpathentry kind="src" path="generated/singletons"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="libs/guava-18.0.jar" sourcepath="libs/src/guava-18.0-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/guava-18.0-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/jasmin"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/heros"/>
 	<classpathentry kind="lib" path="libs/polyglot.jar"/>
@@ -34,5 +29,12 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/util-2.2b4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libs/guava-19.0.jar" sourcepath="libs/src/guava-19.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/soot/libs/doc/guava-19.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.18.jar" sourcepath="libs/src/slf4j-api-1.7.18-sources.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.18.jar" sourcepath="libs/src/slf4j-simple-1.7.18-sources.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
