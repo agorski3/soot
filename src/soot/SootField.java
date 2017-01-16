@@ -37,30 +37,29 @@ import soot.jimple.spark.pag.SparkField;
 */
 public class SootField extends AbstractHost implements ClassMember, SparkField, Numberable, PaddleField
 {
-    String name;
-    Type type;
-    int modifiers;
+    private String name;
+    private Type type;
+    private int modifiers;
 
-    boolean isDeclared = false;
-    SootClass declaringClass;
+    private boolean isDeclared = false;
+    private SootClass declaringClass;
     protected boolean isPhantom = false;
+    private String sig;
+    private String subSig;
 
     /** Constructs a Soot field with the given name, type and modifiers. */
-    public SootField(String name, Type type, int modifiers)
-    {
+    public SootField(String name, Type type, int modifiers) {
         this.name = name;
         this.type = type;
         this.modifiers = modifiers;
         if( type instanceof RefLikeType ) Scene.v().getFieldNumberer().add(this);
+        getSubSignature();
+        getSignature();
     }
 
     /** Constructs a Soot field with the given name, type and no modifiers. */
-    public SootField(String name, Type type)
-    {
-        this.name = name;
-        this.type = type;
-        this.modifiers = 0;
-        if( type instanceof RefLikeType ) Scene.v().getFieldNumberer().add(this);
+    public SootField(String name, Type type) {
+    	this(name,type,0);
     }
 
     public int equivHashCode()
@@ -74,11 +73,12 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     }
 
     public String getSignature() {
-        return getSignature(declaringClass, getName(), getType());
+    	if(sig == null) 
+    		sig = getSignature(getDeclaringClass(), getName(), getType());
+        return sig; 
     }
-    public static String getSignature(SootClass cl, String name, Type type)
-    {
-        StringBuffer buffer = new StringBuffer();
+    public static String getSignature(SootClass cl, String name, Type type) {
+    	StringBuilder buffer = new StringBuilder();
 
         buffer.append("<" + Scene.v().quotedNameOf(cl.getName()) + ": ");
         buffer.append(type + " " + Scene.v().quotedNameOf(name) + ">");
@@ -87,11 +87,13 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
 
     }
   
-    public String getSubSignature()
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(getType() + " " + Scene.v().quotedNameOf(getName()));
-        return buffer.toString().intern();
+    public String getSubSignature() {
+    	if(subSig == null) {
+    		StringBuilder buffer = new StringBuilder();
+    		buffer.append(getType() + " " + Scene.v().quotedNameOf(getName()));
+    		subSig = buffer.toString().intern();
+    	}
+    	return subSig;
     }
 
     public SootClass getDeclaringClass() 
@@ -100,6 +102,12 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
             throw new RuntimeException("not declared: "+getName()+" "+getType());
 
         return declaringClass;
+    }
+    public void setDeclaringClass(SootClass declClass){
+		if(declClass != null){
+		    declaringClass=declClass;
+		    sig = null;
+		}
     }
 
     @Override
@@ -125,10 +133,15 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     {
         return isDeclared;
     }
+    public void setDeclared(boolean isDeclared) {
+        this.isDeclared = isDeclared;
+    }
 
     public void setName(String name)
     {
         this.name = name;
+        sig = null;
+        subSig = null;
     }
 
     public Type getType()
@@ -139,6 +152,8 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     public void setType(Type t)
     {
         this.type = t;
+        sig = null;
+        subSig = null;
     }
 
     /**

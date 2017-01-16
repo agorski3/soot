@@ -228,8 +228,8 @@ public class SootClass extends AbstractHost implements Numberable {
 					+ " of type " + f.getType());
 
 		fields.add(f);
-		f.isDeclared = true;
-		f.declaringClass = this;
+		f.setDeclared(true);
+		f.setDeclaringClass(this);
 
 	}
 
@@ -243,7 +243,7 @@ public class SootClass extends AbstractHost implements Numberable {
 			throw new RuntimeException("did not declare: " + f.getName());
 
 		fields.remove(f);
-		f.isDeclared = false;
+		f.setDeclared(false);
 	}
 
 	/**

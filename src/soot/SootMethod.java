@@ -80,6 +80,9 @@ public class SootMethod
 
     /** Tells this method how to find out where its body lives. */
     protected MethodSource ms;
+    
+    private String sig;
+    private String subSig;
 
     /** Uses methodSource to retrieve the method body in question; does not set it
      * to be the active body.
@@ -145,10 +148,10 @@ public class SootMethod
             DEBUG=false;
             */
         }
-        Scene.v().getMethodNumberer().add(this);
-        subsignature =
-            Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
         
+        Scene.v().getMethodNumberer().add(this);
+        subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());//init the subsignature
+        getSignature();//init the signature
         
     }
 
@@ -166,10 +169,10 @@ public class SootMethod
      * that the method is not set to declared (isDeclared).
      */
     public void setDeclaringClass(SootClass declClass){
-	if(declClass != null){
-	    declaringClass=declClass;
-	    //setDeclared(true);
-	}
+		if(declClass != null){
+		    declaringClass=declClass;
+		    sig = null;
+		}
     }
     
     /** Returns the class which declares the current <code>SootMethod</code>. */
@@ -221,6 +224,8 @@ public class SootMethod
         SootClass oldDeclaringClass = declaringClass;
         if( wasDeclared ) oldDeclaringClass.removeMethod(this);
         this.name = name;
+        subSig = null;
+        sig = null;
         subsignature =
             Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
         if( wasDeclared) oldDeclaringClass.addMethod(this);
@@ -251,6 +256,8 @@ public class SootMethod
         SootClass oldDeclaringClass = declaringClass;
         if( wasDeclared ) oldDeclaringClass.removeMethod(this);
         returnType = t;
+        subSig = null;
+        sig = null;
         subsignature =
             Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
         if( wasDeclared) oldDeclaringClass.addMethod(this);
@@ -281,6 +288,8 @@ public class SootMethod
         SootClass oldDeclaringClass = declaringClass;
         if( wasDeclared ) oldDeclaringClass.removeMethod(this);
         this.parameterTypes = Collections.unmodifiableList(new ArrayList<Type>(l));
+        subSig = null;
+        sig = null;
         subsignature =
             Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
         if( wasDeclared) oldDeclaringClass.addMethod(this);
@@ -289,7 +298,8 @@ public class SootMethod
     /**
         Retrieves the active body for this method.
      */
-    public Body getActiveBody() {
+    @SuppressWarnings("deprecation")
+	public Body getActiveBody() {
         if (declaringClass!=null && declaringClass.isPhantomClass())
             throw new RuntimeException(
                 "cannot get active body for phantom class: " + getSignature());
@@ -561,7 +571,9 @@ public class SootMethod
         Returns the Soot signature of this method.  Used to refer to methods unambiguously.
      */
     public String getSignature() {
-        return getSignature(getDeclaringClass(), getName(), getParameterTypes(), getReturnType());
+    	if(sig == null)
+    		sig = getSignature(getDeclaringClass(), getName(), getParameterTypes(), getReturnType());
+        return sig;
     }
     
     public static String getSignature(SootClass cl, String name, List<Type> params, Type returnType) {
@@ -581,11 +593,9 @@ public class SootMethod
         Returns the Soot subsignature of this method.  Used to refer to methods unambiguously.
      */
     public String getSubSignature() {
-        String name = getName();
-        List<Type> params = getParameterTypes();
-        Type returnType = getReturnType();
-
-        return getSubSignatureImpl(name, params, returnType);
+        if(subSig == null)
+        	subSig = getSubSignatureImpl( getName(), getParameterTypes(), getReturnType());
+        return subSig;
     }
 
     public static String getSubSignature(
