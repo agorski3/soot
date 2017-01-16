@@ -44,8 +44,8 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     private boolean isDeclared = false;
     private SootClass declaringClass;
     protected boolean isPhantom = false;
-    private String sig;
-    private String subSig;
+    private volatile String sig;
+    private volatile String subSig;
 
     /** Constructs a Soot field with the given name, type and modifiers. */
     public SootField(String name, Type type, int modifiers) {
@@ -53,8 +53,6 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
         this.type = type;
         this.modifiers = modifiers;
         if( type instanceof RefLikeType ) Scene.v().getFieldNumberer().add(this);
-        getSubSignature();
-        getSignature();
     }
 
     /** Constructs a Soot field with the given name, type and no modifiers. */
@@ -73,8 +71,13 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     }
 
     public String getSignature() {
-    	if(sig == null) 
-    		sig = getSignature(getDeclaringClass(), getName(), getType());
+    	if(sig == null) {
+    		synchronized(this) {
+    			if(sig == null)
+    				sig = getSignature(getDeclaringClass(), getName(), getType());
+    		}
+    	}
+    		
         return sig; 
     }
     public static String getSignature(SootClass cl, String name, Type type) {
@@ -89,9 +92,13 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
   
     public String getSubSignature() {
     	if(subSig == null) {
-    		StringBuilder buffer = new StringBuilder();
-    		buffer.append(getType() + " " + Scene.v().quotedNameOf(getName()));
-    		subSig = buffer.toString().intern();
+    		synchronized(this) {
+    			if(subSig == null) {
+    	    		StringBuilder buffer = new StringBuilder();
+    	    		buffer.append(getType() + " " + Scene.v().quotedNameOf(getName()));
+    	    		subSig = buffer.toString().intern();
+    	    	}
+    		}
     	}
     	return subSig;
     }
@@ -103,7 +110,7 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
 
         return declaringClass;
     }
-    public void setDeclaringClass(SootClass declClass){
+    public synchronized void setDeclaringClass(SootClass declClass){
 		if(declClass != null){
 		    declaringClass=declClass;
 		    sig = null;
@@ -137,7 +144,7 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
         this.isDeclared = isDeclared;
     }
 
-    public void setName(String name)
+    public synchronized void setName(String name)
     {
         this.name = name;
         sig = null;
@@ -149,7 +156,7 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
         return type;
     }
 
-    public void setType(Type t)
+    public synchronized void setType(Type t)
     {
         this.type = t;
         sig = null;

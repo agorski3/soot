@@ -81,8 +81,8 @@ public class SootMethod
     /** Tells this method how to find out where its body lives. */
     protected MethodSource ms;
     
-    private String sig;
-    private String subSig;
+    private volatile String sig;
+    private volatile String subSig;
 
     /** Uses methodSource to retrieve the method body in question; does not set it
      * to be the active body.
@@ -150,8 +150,7 @@ public class SootMethod
         }
         
         Scene.v().getMethodNumberer().add(this);
-        subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());//init the subsignature
-        getSignature();//init the signature
+        subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
         
     }
 
@@ -168,7 +167,7 @@ public class SootMethod
      * It would make sense to setDeclared to true within this method too. However later when the sootMethod is added it checks
      * that the method is not set to declared (isDeclared).
      */
-    public void setDeclaringClass(SootClass declClass){
+    public synchronized void setDeclaringClass(SootClass declClass){
 		if(declClass != null){
 		    declaringClass=declClass;
 		    sig = null;
@@ -219,7 +218,7 @@ public class SootMethod
     }
 
     /** Sets the name of this method. */
-    public void setName(String name) {
+    public synchronized void setName(String name) {
         boolean wasDeclared = isDeclared;
         SootClass oldDeclaringClass = declaringClass;
         if( wasDeclared ) oldDeclaringClass.removeMethod(this);
@@ -251,7 +250,7 @@ public class SootMethod
     }
 
     /** Sets the return type of this method. */
-    public void setReturnType(Type t) {
+    public synchronized void setReturnType(Type t) {
         boolean wasDeclared = isDeclared;
         SootClass oldDeclaringClass = declaringClass;
         if( wasDeclared ) oldDeclaringClass.removeMethod(this);
@@ -283,7 +282,7 @@ public class SootMethod
     /**
      * Changes the set of parameter types of this method.
      */
-    public void setParameterTypes( List<Type> l ) {
+    public synchronized void setParameterTypes( List<Type> l ) {
         boolean wasDeclared = isDeclared;
         SootClass oldDeclaringClass = declaringClass;
         if( wasDeclared ) oldDeclaringClass.removeMethod(this);
@@ -571,8 +570,12 @@ public class SootMethod
         Returns the Soot signature of this method.  Used to refer to methods unambiguously.
      */
     public String getSignature() {
-    	if(sig == null)
-    		sig = getSignature(getDeclaringClass(), getName(), getParameterTypes(), getReturnType());
+    	if(sig == null) {
+    		synchronized(this) {
+    			if(sig == null)
+    				sig = getSignature(getDeclaringClass(), getName(), getParameterTypes(), getReturnType());
+    		}
+    	}
         return sig;
     }
     
@@ -593,8 +596,12 @@ public class SootMethod
         Returns the Soot subsignature of this method.  Used to refer to methods unambiguously.
      */
     public String getSubSignature() {
-        if(subSig == null)
-        	subSig = getSubSignatureImpl( getName(), getParameterTypes(), getReturnType());
+        if(subSig == null) {
+        	synchronized(this) {
+        		if(subSig == null)
+        			subSig = getSubSignatureImpl( getName(), getParameterTypes(), getReturnType());
+        	}
+        }
         return subSig;
     }
 
