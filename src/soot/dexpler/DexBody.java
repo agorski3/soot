@@ -58,6 +58,8 @@ import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
+import soot.PackManager;
+import soot.PhaseOptions;
 import soot.PrimType;
 import soot.RefType;
 import soot.Scene;
@@ -99,10 +101,10 @@ import soot.jimple.toolkits.scalar.ConditionalBranchFolder;
 import soot.jimple.toolkits.scalar.ConstantCastEliminator;
 import soot.jimple.toolkits.scalar.CopyPropagator;
 import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
-import soot.jimple.toolkits.scalar.LocalNameStandardizer;
 import soot.jimple.toolkits.scalar.NopEliminator;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
 import soot.jimple.toolkits.typing.TypeAssigner;
+import soot.options.JBOptions;
 import soot.options.Options;
 import soot.toolkits.exceptions.TrapTightener;
 import soot.toolkits.scalar.LocalPacker;
@@ -360,10 +362,16 @@ public class DexBody  {
 
 		t_whole_jimplification.start();
 
+        JBOptions jbOptions = new JBOptions(PhaseOptions.v().getPhaseOptions("jb"));
         jBody = (JimpleBody)b;
         localGenerator = new LocalGenerator(jBody);
         deferredInstructions = new ArrayList<DeferableInstruction>();
         instructionsToRetype = new HashSet<RetypeableInstruction>();
+        
+        if(jbOptions.use_original_names())
+        	PhaseOptions.v().setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
+        if(jbOptions.stabilize_local_names())
+        	PhaseOptions.v().setPhaseOption("jb.lns", "sort-locals:true");
 
         if (IDalvikTyper.ENABLE_DVKTYPER) {
             Debug.printDbg(IDalvikTyper.DEBUG, "clear dalvik typer");
@@ -689,7 +697,7 @@ public class DexBody  {
         // again lead to unused locals which we have to remove.
         LocalPacker.v().transform(jBody);
         UnusedLocalEliminator.v().transform(jBody);
-        LocalNameStandardizer.v().transform(jBody);
+        PackManager.v().getTransform("jb.lns").apply(jBody);
 
         Debug.printDbg("\nafter type assigner localpacker and name standardizer");
         Debug.printDbg("",(Body)jBody);
@@ -780,6 +788,8 @@ public class DexBody  {
                 l.setType(RefType.v("java.lang.Object"));
             }
         }
+        
+        PackManager.v().getTransform("jb.lns").apply(jBody);
         
 		t_whole_jimplification.end();
 		Debug.printDbg("timer whole jimlification: ", t_whole_jimplification.getTime());
