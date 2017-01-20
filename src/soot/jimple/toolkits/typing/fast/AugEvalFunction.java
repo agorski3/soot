@@ -147,14 +147,19 @@ public class AugEvalFunction implements IEvalFunction
 			
 			for (RefType t : TrapManager.getExceptionTypesOf(stmt, jb))
 			{
-				if ( r == null )
-					r = t;
-				else if (t.getSootClass().isPhantom())
-					r = Scene.v().getRefType("java.lang.Throwable");
-				else
-					/* In theory, we could have multiple exception types 
-					pointing here. The JLS requires the exception parameter be a *subclass* of Throwable, so we do not need to worry about multiple inheritance. */
-					r = BytecodeHierarchy.lcsc(r, t);
+				if(r == null) {
+					if(t.getSootClass().isPhantom())
+						r = Scene.v().getRefType("java.lang.Throwable");
+					else
+						r = t;
+				} else {
+					if (t.getSootClass().isPhantom())
+						r = Scene.v().getRefType("java.lang.Throwable");
+					else
+						/* In theory, we could have multiple exception types 
+						pointing here. The JLS requires the exception parameter be a *subclass* of Throwable, so we do not need to worry about multiple inheritance. */
+						r = BytecodeHierarchy.lcsc(r, t, Collections.singleton(Scene.v().getRefType("java.lang.Throwable")));
+				}
 			}
 			
 			if ( r == null )
