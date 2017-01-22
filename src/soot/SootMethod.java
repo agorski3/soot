@@ -573,23 +573,24 @@ public class SootMethod
     	if(sig == null) {
     		synchronized(this) {
     			if(sig == null)
-    				sig = getSignature(getDeclaringClass(), getName(), getParameterTypes(), getReturnType());
+    				sig = getSignature(getDeclaringClass(), getSubSignature());
     		}
     	}
         return sig;
     }
     
     public static String getSignature(SootClass cl, String name, List<Type> params, Type returnType) {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("<");
-        buffer.append(Scene.v().quotedNameOf(cl.getName()));
-        buffer.append(": ");
-        buffer.append(getSubSignatureImpl(name, params, returnType));
-        buffer.append(">");
-
-        // Again, memory-usage tweak depending on JDK implementation due
-        // to Michael Pan.
-        return buffer.toString().intern();
+    	return getSignature(cl,getSubSignatureImpl(name, params, returnType));
+    }
+    
+    public static String getSignature(SootClass cl, String subSignature) {
+    	 StringBuilder buffer = new StringBuilder();
+         buffer.append("<");
+         buffer.append(Scene.v().quotedNameOf(cl.getName()));
+         buffer.append(": ");
+         buffer.append(subSignature);
+         buffer.append(">");
+         return buffer.toString().intern();
     }
 
     /**
@@ -599,23 +600,17 @@ public class SootMethod
         if(subSig == null) {
         	synchronized(this) {
         		if(subSig == null)
-        			subSig = getSubSignatureImpl( getName(), getParameterTypes(), getReturnType());
+        			subSig = getSubSignatureImpl(getName(), getParameterTypes(), getReturnType());
         	}
         }
         return subSig;
     }
 
-    public static String getSubSignature(
-        String name,
-        List<Type> params,
-        Type returnType) {
+    public static String getSubSignature(String name, List<Type> params, Type returnType) {
         return getSubSignatureImpl(name, params, returnType);
     }
     
-    private static String getSubSignatureImpl(
-        String name,
-        List<Type> params,
-        Type returnType) {
+    private static String getSubSignatureImpl(String name, List<Type> params, Type returnType) {
         StringBuilder buffer = new StringBuilder();
         
         buffer.append(returnType.getEscapedName());

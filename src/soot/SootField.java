@@ -74,33 +74,39 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     	if(sig == null) {
     		synchronized(this) {
     			if(sig == null)
-    				sig = getSignature(getDeclaringClass(), getName(), getType());
+    				sig = getSignature(getDeclaringClass(), getSubSignature());
     		}
     	}
     		
         return sig; 
     }
+    
     public static String getSignature(SootClass cl, String name, Type type) {
+    	return getSignature(cl,getSubSignature(name,type));
+    }
+    
+    public static String getSignature(SootClass cl, String subSignature) {
     	StringBuilder buffer = new StringBuilder();
-
-        buffer.append("<" + Scene.v().quotedNameOf(cl.getName()) + ": ");
-        buffer.append(type + " " + Scene.v().quotedNameOf(name) + ">");
-
+        buffer.append("<").append(Scene.v().quotedNameOf(cl.getName())).append(": ");
+        buffer.append(subSignature).append(">");
         return buffer.toString().intern();
-
     }
   
     public String getSubSignature() {
     	if(subSig == null) {
     		synchronized(this) {
     			if(subSig == null) {
-    	    		StringBuilder buffer = new StringBuilder();
-    	    		buffer.append(getType() + " " + Scene.v().quotedNameOf(getName()));
-    	    		subSig = buffer.toString().intern();
+    	    		subSig = getSubSignature(getName(), getType());
     	    	}
     		}
     	}
     	return subSig;
+    }
+    
+    private static String getSubSignature(String name, Type type) {
+    	StringBuilder buffer = new StringBuilder();
+		buffer.append(type + " " + Scene.v().quotedNameOf(name));
+		return buffer.toString().intern();
     }
 
     public SootClass getDeclaringClass() 
