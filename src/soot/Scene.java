@@ -968,12 +968,21 @@ public class Scene  //extends AbstractHost
 				return tsc;
 		}
 		
-		if ((allowsPhantomRefs() && phantomNonExist) ||
-				   className.equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME)) {
-			SootClass c = new SootClass(className);
-			addClass(c);
-            c.setPhantom(true);
-			return c;
+		if ((allowsPhantomRefs() && phantomNonExist) || className.equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME)) {
+			synchronized(this) {
+				//Double check the class has not been created already between last check an synchronize
+				type = nameToClass.get(className);
+				if (type != null) {
+					SootClass tsc = type.getSootClass();
+					if (tsc != null)
+						return tsc;
+				}
+				
+				SootClass c = new SootClass(className);
+				addClass(c);
+	            c.setPhantom(true);
+				return c;
+			}
 		}
 		
 		return null;
