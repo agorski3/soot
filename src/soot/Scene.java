@@ -864,6 +864,17 @@ public class Scene  //extends AbstractHost
      * Use {@link #getRefTypeUnsafe(String)} to check if type is an registered RefType.
      */
     public Type getType(String arg) {
+    	Type t = getTypeUnsafe(arg, false);//Set to false to preserve the original functionality just in case
+    	if(t == null)
+    		throw new RuntimeException("Unknown Type: '" + t + "'");
+    	return t;
+    }
+    
+    public Type getTypeUnsafe(String arg) {
+    	return getTypeUnsafe(arg, true);
+    }
+    
+    public Type getTypeUnsafe(String arg, boolean phantomNonExist) {
     	String type = arg.replaceAll("([^\\[\\]]*)(.*)", "$1");
     	int arrayCount = arg.contains("[") ? arg.replaceAll("([^\\[\\]]*)(.*)", "$2").length() / 2 : 0;
     	
@@ -888,11 +899,13 @@ public class Scene  //extends AbstractHost
               result = VoidType.v();
     		else if (type.equals("boolean"))
               result = BooleanType.v();
-    		else
-              throw new RuntimeException("unknown type: '" + type + "'");
+    		else if(allowsPhantomRefs() && phantomNonExist) {
+    			getSootClassUnsafe(type, phantomNonExist);
+    			result = getRefTypeUnsafe(type);
+    		}
     	}
     	
-    	if (arrayCount != 0) {
+    	if (result != null && arrayCount != 0) {
     		result = ArrayType.v(result, arrayCount);
     	}
     	return result;
