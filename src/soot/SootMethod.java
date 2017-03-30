@@ -208,12 +208,8 @@ public class SootMethod
     /** Sets the phantom flag on this method. */
     @Override
     public void setPhantom(boolean value) {
-        if (value) {
-            if (!Scene.v().allowsPhantomRefs())
-                throw new RuntimeException("Phantom refs not allowed");
-            if (declaringClass != null && !declaringClass.isPhantom())
-                throw new RuntimeException("Declaring class would have to be phantom");
-        }
+        if (value && !Scene.v().allowsPhantomRefs())
+        	throw new RuntimeException("Phantom refs not allowed");
         isPhantom = value;
     }
 
@@ -326,9 +322,9 @@ public class SootMethod
     		return getActiveBody();
     	
         declaringClass.checkLevel(SootClass.BODIES);
-        if (declaringClass.isPhantomClass())
+        if (declaringClass.isPhantomClass() || isPhantom())
             throw new RuntimeException(
-                "cannot get resident body for phantom class : "
+                "cannot get resident body for phantom method : "
                     + getSignature()
                     + "; maybe you want to call c.setApplicationClass() on this class!");
         
