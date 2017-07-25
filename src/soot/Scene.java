@@ -735,7 +735,7 @@ public class Scene  //extends AbstractHost
         if( sig.charAt(sig.length()-1) != '>' ) throw new RuntimeException("oops "+sig);
         int index = sig.indexOf( ":" );
         if( index < 0 ) throw new RuntimeException("oops "+sig);
-        return sig.substring(1,index);
+        return unescapeName(sig.substring(1,index));
     }
 
     public String signatureToSubsignature(String sig) {
