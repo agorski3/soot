@@ -24,243 +24,218 @@
  * contributors.  (Soot is distributed at http://www.sable.mcgill.ca/soot)
  */
 
-
 package soot;
 
-import soot.tagkit.*;
-import soot.util.*;
 import soot.jimple.paddle.PaddleField;
 import soot.jimple.spark.pag.SparkField;
+import soot.tagkit.AbstractHost;
+import soot.util.Numberable;
 
 /**
-    Soot representation of a Java field.  Can be declared to belong to a SootClass.
-*/
+ * Soot representation of a Java field. Can be declared to belong to a
+ * SootClass.
+ */
 public class SootField extends AbstractHost implements ClassMember, SparkField, Numberable, PaddleField
 {
-    private String name;
-    private Type type;
-    private int modifiers;
+	private String name;
+	private Type type;
+	private int modifiers;
 
-    private boolean isDeclared = false;
-    private SootClass declaringClass;
-    protected boolean isPhantom = false;
-    private volatile String sig;
-    private volatile String subSig;
+	private boolean isDeclared = false;
+	private SootClass declaringClass;
+	protected boolean isPhantom = false;
+	private volatile String sig;
+	private volatile String subSig;
 
-    /** Constructs a Soot field with the given name, type and modifiers. */
-    public SootField(String name, Type type, int modifiers) {
-        this.name = name;
-        this.type = type;
-        this.modifiers = modifiers;
-        if( type instanceof RefLikeType ) Scene.v().getFieldNumberer().add(this);
-    }
+	/** Constructs a Soot field with the given name, type and modifiers. */
+	public SootField(String name, Type type, int modifiers) {
+		this.name = name;
+		this.type = type;
+		this.modifiers = modifiers;
+		if (type instanceof RefLikeType)
+			Scene.v().getFieldNumberer().add(this);
+	}
 
-    /** Constructs a Soot field with the given name, type and no modifiers. */
-    public SootField(String name, Type type) {
-    	this(name,type,0);
-    }
+	/** Constructs a Soot field with the given name, type and no modifiers. */
+	public SootField(String name, Type type) {
+		this(name,type,0);
+	}
 
-    public int equivHashCode()
-    {
-        return type.hashCode() * 101 + modifiers * 17 + name.hashCode();
-    }
+	public int equivHashCode() {
+		return type.hashCode() * 101 + modifiers * 17 + name.hashCode();
+	}
 
-    public String getName()
-    {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getSignature() {
-    	if(sig == null) {
-    		synchronized(this) {
-    			if(sig == null)
-    				sig = getSignature(getDeclaringClass(), getSubSignature());
-    		}
-    	}
-    		
-        return sig; 
-    }
-    
-    public static String getSignature(SootClass cl, String name, Type type) {
-    	return getSignature(cl,getSubSignature(name,type));
-    }
-    
-    public static String getSignature(SootClass cl, String subSignature) {
-    	StringBuilder buffer = new StringBuilder();
-        buffer.append("<").append(Scene.v().quotedNameOf(cl.getName())).append(": ");
-        buffer.append(subSignature).append(">");
-        return buffer.toString().intern();
-    }
-  
-    public String getSubSignature() {
-    	if(subSig == null) {
-    		synchronized(this) {
-    			if(subSig == null) {
-    	    		subSig = getSubSignature(getName(), getType());
-    	    	}
-    		}
-    	}
-    	return subSig;
-    }
-    
-    private static String getSubSignature(String name, Type type) {
-    	StringBuilder buffer = new StringBuilder();
+	public String getSignature() {
+		if(sig == null) {
+			synchronized(this) {
+				if(sig == null)
+					sig = getSignature(getDeclaringClass(), getSubSignature());
+			}
+		}
+			
+		return sig; 
+	}
+
+	public static String getSignature(SootClass cl, String name, Type type) {
+		return getSignature(cl,getSubSignature(name,type));
+	}
+
+	public static String getSignature(SootClass cl, String subSignature) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("<").append(Scene.v().quotedNameOf(cl.getName())).append(": ");
+		buffer.append(subSignature).append(">");
+		return buffer.toString().intern();
+	}
+
+	public String getSubSignature() {
+		if(subSig == null) {
+			synchronized(this) {
+				if(subSig == null) {
+					subSig = getSubSignature(getName(), getType());
+				}
+			}
+		}
+		return subSig;
+	}
+
+	private static String getSubSignature(String name, Type type) {
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(type + " " + Scene.v().quotedNameOf(name));
 		return buffer.toString().intern();
-    }
+	}
 
-    public SootClass getDeclaringClass() 
-    {
-        if(!isDeclared)
-            throw new RuntimeException("not declared: "+getName()+" "+getType());
+	public SootClass getDeclaringClass() {
+		if (!isDeclared)
+			throw new RuntimeException("not declared: " + getName() + " " + getType());
 
-        return declaringClass;
-    }
-    public synchronized void setDeclaringClass(SootClass declClass){
+		return declaringClass;
+	}
+	public synchronized void setDeclaringClass(SootClass declClass){
 		if(declClass != null){
-		    declaringClass=declClass;
-		    sig = null;
+			declaringClass = declClass;
+			sig = null;
 		}
-    }
+	}
 
-    @Override
-    public boolean isPhantom()
-    {
-        return isPhantom;
-    }
-    
-    @Override
-    public void setPhantom(boolean value)
-    {
-        if( value ) {
-            if( !Scene.v().allowsPhantomRefs() ) 
-                throw new RuntimeException( "Phantom refs not allowed" );
-            if( declaringClass != null && !declaringClass.isPhantom() )
-                throw new 
-                    RuntimeException( "Declaring class would have to be phantom" );
-        }
-        isPhantom = value;
-    }
+	@Override
+	public boolean isPhantom() {
+		return isPhantom;
+	}
 
-    public boolean isDeclared()
-    {
-        return isDeclared;
-    }
-    public void setDeclared(boolean isDeclared) {
-        this.isDeclared = isDeclared;
-    }
+	@Override
+	public void setPhantom(boolean value) {
+		if (value) {
+			if (!Scene.v().allowsPhantomRefs())
+				throw new RuntimeException("Phantom refs not allowed");
+			if (declaringClass != null && !declaringClass.isPhantom())
+				throw new RuntimeException("Declaring class would have to be phantom");
+		}
+		isPhantom = value;
+	}
 
-    public synchronized void setName(String name)
-    {
-        this.name = name;
-        sig = null;
-        subSig = null;
-    }
+	public boolean isDeclared() {
+		return isDeclared;
+	}
+	public void setDeclared(boolean isDeclared) {
+		this.isDeclared = isDeclared;
+	}
 
-    public Type getType()
-    {
-        return type;
-    }
+	public synchronized void setName(String name) {
+		this.name = name;
+		sig = null;
+		subSig = null;
+	}
 
-    public synchronized void setType(Type t)
-    {
-        this.type = t;
-        sig = null;
-        subSig = null;
-    }
+	public Type getType() {
+		return type;
+	}
 
-    /**
-     * Convenience method returning true if this field is public.
-     */
-    public boolean isPublic()
-    {
-        return Modifier.isPublic(this.getModifiers());
-    }
+	public synchronized void setType(Type t) {
+		this.type = t;
+		sig = null;
+		subSig = null;
+	}
 
-    /**
-     * Convenience method returning true if this field is protected.
-     */
-    public boolean isProtected()
-    {
-        return Modifier.isProtected(this.getModifiers());
-    }
+	/**
+	 * Convenience method returning true if this field is public.
+	 */
+	public boolean isPublic() {
+		return Modifier.isPublic(this.getModifiers());
+	}
 
-    /**
-     * Convenience method returning true if this field is private.
-     */
-    public boolean isPrivate()
-    {
-        return Modifier.isPrivate(this.getModifiers());
-    }
+	/**
+	 * Convenience method returning true if this field is protected.
+	 */
+	public boolean isProtected() {
+		return Modifier.isProtected(this.getModifiers());
+	}
 
-    /**
-     * Convenience method returning true if this field is static.
-     */
-    public boolean isStatic()
-    {
-        return Modifier.isStatic(this.getModifiers());
-    }
+	/**
+	 * Convenience method returning true if this field is private.
+	 */
+	public boolean isPrivate() {
+		return Modifier.isPrivate(this.getModifiers());
+	}
 
-    /**
-     * Convenience method returning true if this field is final.
-     */
-    public boolean isFinal()
-    {
-        return Modifier.isFinal(this.getModifiers());
-    }
+	/**
+	 * Convenience method returning true if this field is static.
+	 */
+	public boolean isStatic() {
+		return Modifier.isStatic(this.getModifiers());
+	}
 
+	/**
+	 * Convenience method returning true if this field is final.
+	 */
+	public boolean isFinal() {
+		return Modifier.isFinal(this.getModifiers());
+	}
 
+	public void setModifiers(int modifiers) {
+		if (!declaringClass.isApplicationClass())
+			throw new RuntimeException("Cannot set modifiers of a field from a non-app class!");
 
-    public void setModifiers(int modifiers)
-    {
-        if (!declaringClass.isApplicationClass())
-            throw new RuntimeException("Cannot set modifiers of a field from a non-app class!");
-            
-        this.modifiers = modifiers;
-    }
+		this.modifiers = modifiers;
+	}
 
-    public int getModifiers()
-    {
-        return modifiers;
-    }
+	public int getModifiers() {
+		return modifiers;
+	}
 
-    public String toString()
-    {
-        return getSignature();
-    }
+	public String toString() {
+		return getSignature();
+	}
 
+	private String getOriginalStyleDeclaration() {
+		String qualifiers = Modifier.toString(modifiers) + " " + type.toString();
+		qualifiers = qualifiers.trim();
 
-    private String getOriginalStyleDeclaration()
-    {
-        String qualifiers = Modifier.toString(modifiers) + " " + type.toString();
-        qualifiers = qualifiers.trim();
+		if (qualifiers.equals(""))
+			return Scene.v().quotedNameOf(name);
+		else
+			return qualifiers + " " + Scene.v().quotedNameOf(name) + "";
 
-        if(qualifiers.equals(""))
-            return Scene.v().quotedNameOf(name);
-        else
-            return qualifiers + " " + Scene.v().quotedNameOf(name) + "";
+	}
 
-    }
+	public String getDeclaration() {
+		return getOriginalStyleDeclaration();
+	}
 
+	public final int getNumber() {
+		return number;
+	}
 
-    public String getDeclaration()
-    {
-        return getOriginalStyleDeclaration();
-    }
-    public final int getNumber() {
-        return number;
-    }
-    public final void setNumber(int number) {
-        this.number = number;
-    }
-    private int number = 0;
-    public SootFieldRef makeRef() {
-        return Scene.v().makeFieldRef(declaringClass, name, type, isStatic());
-    }
+	public final void setNumber(int number) {
+		this.number = number;
+	}
+
+	private int number = 0;
+
+	public SootFieldRef makeRef() {
+		return Scene.v().makeFieldRef(declaringClass, name, type, isStatic());
+	}
 }
-
-
-
-
-
-

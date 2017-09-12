@@ -90,8 +90,16 @@ public class Options extends OptionsBase {
     public static final int java_version_7 = 8;
     public static final int java_version_1_8 = 9;
     public static final int java_version_8 = 9;
+    public static final int wrong_staticness_fail = 1;
+    public static final int wrong_staticness_ignore = 2;
+    public static final int wrong_staticness_fix = 3;
+    public static final int wrong_staticness_fixstrict = 4;
+    public static final int field_type_mismatches_fail = 1;
+    public static final int field_type_mismatches_ignore = 2;
+    public static final int field_type_mismatches_null = 3;
     public static final int throw_analysis_pedantic = 1;
     public static final int throw_analysis_unit = 2;
+    public static final int throw_analysis_dalvik = 3;
     public static final int check_init_throw_analysis_auto = 1;
     public static final int check_init_throw_analysis_pedantic = 2;
     public static final int check_init_throw_analysis_unit = 3;
@@ -119,24 +127,24 @@ public class Options extends OptionsBase {
             || option.equals( "coffi" )
             )
                 coffi = true;
-  
+    	
             else if( false 
             || option.equals( "asm-backend" )
             )
                 asm_backend = true;
-  
+    	
             else if( false 
             || option.equals( "h" )
             || option.equals( "help" )
             )
                 help = true;
-  
+    	
             else if( false 
             || option.equals( "pl" )
             || option.equals( "phase-list" )
             )
                 phase_list = true;
-  
+    	
             else if( false
             || option.equals( "ph" )
             || option.equals( "phase-help" )
@@ -158,61 +166,66 @@ public class Options extends OptionsBase {
             || option.equals( "version" )
             )
                 version = true;
-  
+    	
             else if( false 
             || option.equals( "v" )
             || option.equals( "verbose" )
             )
                 verbose = true;
-  
+    	
             else if( false 
             || option.equals( "interactive-mode" )
             )
                 interactive_mode = true;
-  
+    	
             else if( false 
             || option.equals( "unfriendly-mode" )
             )
                 unfriendly_mode = true;
-  
+    	
             else if( false 
             || option.equals( "app" )
             )
                 app = true;
-  
+    	
             else if( false 
             || option.equals( "w" )
             || option.equals( "whole-program" )
             )
                 whole_program = true;
-  
+    	
             else if( false 
             || option.equals( "ws" )
             || option.equals( "whole-shimple" )
             )
                 whole_shimple = true;
-  
+    	
             else if( false 
             || option.equals( "fly" )
             || option.equals( "on-the-fly" )
             )
                 on_the_fly = true;
-  
+    	
             else if( false 
             || option.equals( "validate" )
             )
                 validate = true;
-  
+    	
             else if( false 
             || option.equals( "debug" )
             )
                 debug = true;
-  
+    	
             else if( false 
             || option.equals( "debug-resolver" )
             )
                 debug_resolver = true;
-  
+    	
+            else if( false 
+            || option.equals( "ignore-resolving-levels" )
+            )
+                ignore_resolving_levels = true;
+    	
             else if( false
             || option.equals( "cp" )
             || option.equals( "soot-class-path" )
@@ -237,18 +250,18 @@ public class Options extends OptionsBase {
             || option.equals( "prepend-classpath" )
             )
                 prepend_classpath = true;
-  
+    	
             else if( false 
             || option.equals( "ice" )
             || option.equals( "ignore-classpath-errors" )
             )
                 ignore_classpath_errors = true;
-  
+    	
             else if( false 
             || option.equals( "process-multiple-dex" )
             )
                 process_multiple_dex = true;
-  
+    	
             else if( false
             || option.equals( "process-path" )
             || option.equals( "process-dir" )
@@ -270,7 +283,7 @@ public class Options extends OptionsBase {
             || option.equals( "oaat" )
             )
                 oaat = true;
-  
+    	
             else if( false
             || option.equals( "android-jars" )
             ) {
@@ -326,7 +339,7 @@ public class Options extends OptionsBase {
             || option.equals( "ast-metrics" )
             )
                 ast_metrics = true;
-  
+    	
             else if( false
             || option.equals( "src-prec" )
             ) {
@@ -417,22 +430,22 @@ public class Options extends OptionsBase {
             || option.equals( "full-resolver" )
             )
                 full_resolver = true;
-  
+    	
             else if( false 
             || option.equals( "allow-phantom-refs" )
             )
                 allow_phantom_refs = true;
-  
+    	
             else if( false 
             || option.equals( "no-bodies-for-excluded" )
             )
                 no_bodies_for_excluded = true;
-  
+    	
             else if( false 
             || option.equals( "j2me" )
             )
                 j2me = true;
-  
+    	
             else if( false
             || option.equals( "main-class" )
             ) {
@@ -454,12 +467,17 @@ public class Options extends OptionsBase {
             || option.equals( "polyglot" )
             )
                 polyglot = true;
-  
+    	
             else if( false 
             || option.equals( "permissive-resolving" )
             )
                 permissive_resolving = true;
-  
+    	
+            else if( false 
+            || option.equals( "no-drop-bodies-after-load" )
+            )
+                drop_bodies_after_load = false;
+    	
             else if( false
             || option.equals( "d" )
             || option.equals( "output-dir" )
@@ -825,28 +843,28 @@ public class Options extends OptionsBase {
             || option.equals( "output-jar" )
             )
                 output_jar = true;
-  
+    	
             else if( false 
             || option.equals( "xml-attributes" )
             )
                 xml_attributes = true;
-  
+    	
             else if( false 
             || option.equals( "print-tags" )
             || option.equals( "print-tags-in-output" )
             )
                 print_tags_in_output = true;
-  
+    	
             else if( false 
             || option.equals( "no-output-source-file-attribute" )
             )
                 no_output_source_file_attribute = true;
-  
+    	
             else if( false 
             || option.equals( "no-output-inner-classes-attribute" )
             )
                 no_output_inner_classes_attribute = true;
-  
+    	
             else if( false
             || option.equals( "dump-body" )
             ) {
@@ -880,20 +898,20 @@ public class Options extends OptionsBase {
             }
   
             else if( false 
-            || option.equals( "show-exception-dests" )
+            || option.equals( "no-show-exception-dests" )
             )
-                show_exception_dests = true;
-  
+                show_exception_dests = false;
+    	
             else if( false 
             || option.equals( "gzip" )
             )
                 gzip = true;
-  
+    	
             else if( false 
             || option.equals( "force-overwrite" )
             )
                 force_overwrite = true;
-  
+    	
             else if( false
             || option.equals( "plugin" )
             ) {
@@ -914,6 +932,117 @@ public class Options extends OptionsBase {
                 }
                 
             }
+  
+            else if( false
+            || option.equals( "wrong-staticness" )
+            ) {
+                if( !hasMoreOptions() ) {
+                    G.v().out.println( "No value given for option -"+option );
+                    return false;
+                }
+                String value = nextOption();
+    
+                if( false );
+    
+                else if( false
+                || value.equals( "fail" )
+                ) {
+                    if( wrong_staticness != 0
+                    && wrong_staticness != wrong_staticness_fail ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    wrong_staticness = wrong_staticness_fail;
+                }
+    
+                else if( false
+                || value.equals( "ignore" )
+                ) {
+                    if( wrong_staticness != 0
+                    && wrong_staticness != wrong_staticness_ignore ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    wrong_staticness = wrong_staticness_ignore;
+                }
+    
+                else if( false
+                || value.equals( "fix" )
+                ) {
+                    if( wrong_staticness != 0
+                    && wrong_staticness != wrong_staticness_fix ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    wrong_staticness = wrong_staticness_fix;
+                }
+    
+                else if( false
+                || value.equals( "fixstrict" )
+                ) {
+                    if( wrong_staticness != 0
+                    && wrong_staticness != wrong_staticness_fixstrict ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    wrong_staticness = wrong_staticness_fixstrict;
+                }
+    
+                else {
+                    G.v().out.println( "Invalid value "+value+" given for option -"+option );
+                    return false;
+                }
+           }
+  
+            else if( false
+            || option.equals( "field-type-mismatches" )
+            ) {
+                if( !hasMoreOptions() ) {
+                    G.v().out.println( "No value given for option -"+option );
+                    return false;
+                }
+                String value = nextOption();
+    
+                if( false );
+    
+                else if( false
+                || value.equals( "fail" )
+                ) {
+                    if( field_type_mismatches != 0
+                    && field_type_mismatches != field_type_mismatches_fail ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    field_type_mismatches = field_type_mismatches_fail;
+                }
+    
+                else if( false
+                || value.equals( "ignore" )
+                ) {
+                    if( field_type_mismatches != 0
+                    && field_type_mismatches != field_type_mismatches_ignore ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    field_type_mismatches = field_type_mismatches_ignore;
+                }
+    
+                else if( false
+                || value.equals( "null" )
+                ) {
+                    if( field_type_mismatches != 0
+                    && field_type_mismatches != field_type_mismatches_null ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    field_type_mismatches = field_type_mismatches_null;
+                }
+    
+                else {
+                    G.v().out.println( "Invalid value "+value+" given for option -"+option );
+                    return false;
+                }
+           }
   
             else if( false
             || option.equals( "p" )
@@ -978,12 +1107,12 @@ public class Options extends OptionsBase {
             || option.equals( "via-grimp" )
             )
                 via_grimp = true;
-  
+    	
             else if( false 
             || option.equals( "via-shimple" )
             )
                 via_shimple = true;
-  
+    	
             else if( false
             || option.equals( "throw-analysis" )
             ) {
@@ -1015,6 +1144,17 @@ public class Options extends OptionsBase {
                         return false;
                     }
                     throw_analysis = throw_analysis_unit;
+                }
+    
+                else if( false
+                || value.equals( "dalvik" )
+                ) {
+                    if( throw_analysis != 0
+                    && throw_analysis != throw_analysis_dalvik ) {
+                        G.v().out.println( "Multiple values given for option "+option );
+                        return false;
+                    }
+                    throw_analysis = throw_analysis_dalvik;
                 }
     
                 else {
@@ -1089,7 +1229,7 @@ public class Options extends OptionsBase {
             || option.equals( "omit-excepting-unit-edges" )
             )
                 omit_excepting_unit_edges = true;
-  
+    	
             else if( false
             || option.equals( "trim-cfgs" )
             ) {
@@ -1107,7 +1247,7 @@ public class Options extends OptionsBase {
             || option.equals( "ignore-resolution-errors" )
             )
                 ignore_resolution_errors = true;
-  
+    	
             else if( false
             || option.equals( "i" )
             || option.equals( "include" )
@@ -1146,7 +1286,7 @@ public class Options extends OptionsBase {
             || option.equals( "include-all" )
             )
                 include_all = true;
-  
+    	
             else if( false
             || option.equals( "dynamic-class" )
             ) {
@@ -1199,18 +1339,18 @@ public class Options extends OptionsBase {
             || option.equals( "keep-line-number" )
             )
                 keep_line_number = true;
-  
+    	
             else if( false 
             || option.equals( "keep-bytecode-offset" )
             || option.equals( "keep-offset" )
             )
                 keep_offset = true;
-  
+    	
             else if( false 
             || option.equals( "write-local-annotations" )
             )
                 write_local_annotations = true;
-  
+    	
             else if( false
             || option.equals( "annot-purity" )
             ) {
@@ -1281,17 +1421,17 @@ public class Options extends OptionsBase {
             || option.equals( "time" )
             )
                 time = true;
-  
+    	
             else if( false 
             || option.equals( "subtract-gc" )
             )
                 subtract_gc = true;
-  
+    	
             else if( false 
             || option.equals( "no-writeout-body-releasing" )
             )
                 no_writeout_body_releasing = true;
-  
+    	
             else {
                 G.v().out.println( "Invalid option -"+option );
                 return false;
@@ -1384,6 +1524,10 @@ public class Options extends OptionsBase {
     private boolean debug_resolver = false;
     public void set_debug_resolver( boolean setting ) { debug_resolver = setting; }
   
+    public boolean ignore_resolving_levels() { return ignore_resolving_levels; }
+    private boolean ignore_resolving_levels = false;
+    public void set_ignore_resolving_levels( boolean setting ) { ignore_resolving_levels = setting; }
+  
     public String soot_classpath() { return soot_classpath; }
     public void set_soot_classpath( String setting ) { soot_classpath = setting; }
     private String soot_classpath = "";
@@ -1457,6 +1601,10 @@ public class Options extends OptionsBase {
     private boolean permissive_resolving = false;
     public void set_permissive_resolving( boolean setting ) { permissive_resolving = setting; }
   
+    public boolean drop_bodies_after_load() { return drop_bodies_after_load; }
+    private boolean drop_bodies_after_load = true;
+    public void set_drop_bodies_after_load( boolean setting ) { drop_bodies_after_load = setting; }
+  
     public String output_dir() { return output_dir; }
     public void set_output_dir( String setting ) { output_dir = setting; }
     private String output_dir = "";
@@ -1508,7 +1656,7 @@ public class Options extends OptionsBase {
     public void set_dump_cfg( List<String> setting ) { dump_cfg = setting; }
     private List<String> dump_cfg = null;
     public boolean show_exception_dests() { return show_exception_dests; }
-    private boolean show_exception_dests = false;
+    private boolean show_exception_dests = true;
     public void set_show_exception_dests( boolean setting ) { show_exception_dests = setting; }
   
     public boolean gzip() { return gzip; }
@@ -1527,6 +1675,19 @@ public class Options extends OptionsBase {
     }
     public void set_plugin( List<String> setting ) { plugin = setting; }
     private List<String> plugin = null;
+    public int wrong_staticness() {
+        if( wrong_staticness == 0 ) return wrong_staticness_fix;
+        if( wrong_staticness == 0 ) return wrong_staticness_fixstrict;
+        return wrong_staticness; 
+    }
+    public void set_wrong_staticness( int setting ) { wrong_staticness = setting; }
+    private int wrong_staticness = 0;
+    public int field_type_mismatches() {
+        if( field_type_mismatches == 0 ) return field_type_mismatches_null;
+        return field_type_mismatches; 
+    }
+    public void set_field_type_mismatches( int setting ) { field_type_mismatches = setting; }
+    private int field_type_mismatches = 0;
     public boolean via_grimp() { return via_grimp; }
     private boolean via_grimp = false;
     public void set_via_grimp( boolean setting ) { via_grimp = setting; }
@@ -1645,6 +1806,7 @@ public class Options extends OptionsBase {
 +padOpt(" -validate", "Run internal validation on bodies" )
 +padOpt(" -debug", "Print various Soot debugging info" )
 +padOpt(" -debug-resolver", "Print debugging info from SootResolver" )
++padOpt(" -ignore-resolving-levels", "Ignore mismatching resolving levels" )
 +"\nInput Options:\n"
       
 +padOpt(" -cp PATH -soot-class-path PATH -soot-classpath PATH", "Use PATH as the classpath for finding classes." )
@@ -1670,6 +1832,7 @@ public class Options extends OptionsBase {
 +padOpt(" -main-class CLASS", "Sets the main class for whole-program analysis." )
 +padOpt(" -polyglot", "Use Java 1.4 Polyglot frontend instead of JastAdd" )
 +padOpt(" -permissive-resolving", "Use alternative sources when classes cannot be found using the normal resolving strategy" )
++padOpt(" -drop-bodies-after-load", "Drop the method source after it has served its purpose of loading the method body" )
 +"\nOutput Options:\n"
       
 +padOpt(" -d DIR -output-dir DIR", "Store output files in DIR" )
@@ -1714,6 +1877,15 @@ public class Options extends OptionsBase {
 +"\nProcessing Options:\n"
       
 +padOpt(" -plugin FILE", "Load all plugins found in FILE" )
++padOpt(" -wrong-staticness ARG", "Ignores or fixes errors due to wrong staticness" )
++padVal(" fail", "Raise an error when wrong staticness is detected" )
++padVal(" ignore", "Ignore errors caused by wrong staticness" )
++padVal(" fix (default)", "Transparently fix staticness errors" )
++padVal(" fixstrict (default)", "Transparently fix staticness errors, but do not ignore remaining errors" )
++padOpt(" -field-type-mismatches ARG", "Specifies how errors shall be handled when resolving field references with mismatching types" )
++padVal(" fail", "Raise an error when a field type mismatch is detected" )
++padVal(" ignore", "Ignore field type mismatches" )
++padVal(" null (default)", "Return null in case of type mismatch" )
 +padOpt(" -p PHASE OPT:VAL -phase-option PHASE OPT:VAL", "Set PHASE's OPT option to VALUE" )
 +padOpt(" -O -optimize", "Perform intraprocedural optimizations" )
 +padOpt(" -W -whole-optimize", "Perform whole program optimizations" )
@@ -1722,6 +1894,7 @@ public class Options extends OptionsBase {
 +padOpt(" -throw-analysis ARG", "" )
 +padVal(" pedantic", "Pedantically conservative throw analysis" )
 +padVal(" unit (default)", "Unit Throw Analysis" )
++padVal(" dalvik", "Dalvik Throw Analysis" )
 +padOpt(" -check-init-ta ARG -check-init-throw-analysis ARG", "" )
 +padVal(" auto (default)", "Automatically select a throw analysis" )
 +padVal(" pedantic", "Pedantically conservative throw analysis" )
@@ -1764,6 +1937,8 @@ public class Options extends OptionsBase {
         return ""
     
         +padOpt("jb", "Creates a JimpleBody for each method")
+        +padVal("jb.dtr", "Reduces chains of catch-all traps")
+        +padVal("jb.ese", "Removes empty switch statements")
         +padVal("jb.ls", "Local splitter: one local per DU-UD web")
         +padVal("jb.a", "Aggregator: removes some unnecessary copies")
         +padVal("jb.ule", "Unused local eliminator")
@@ -1791,6 +1966,7 @@ public class Options extends OptionsBase {
         +padVal("jj.ne", "Nop eliminator")
         +padVal("jj.uce", "Unreachable code eliminator")
         +padOpt("wjpp", "Whole Jimple Pre-processing Pack")
+        +padVal("wjpp.cimbt", "Replaces base objects of calls to Method.invoke() that are string constants by locals")
         +padOpt("wspp", "Whole Shimple Pre-processing Pack")
         +padOpt("cg", "Call graph constructor")
         +padVal("cg.cha", "Builds call graph using Class Hierarchy Analysis")
@@ -1884,6 +2060,18 @@ public class Options extends OptionsBase {
                 +padOpt( "preserve-source-annotations (false)", "" )
                 +padOpt( "stabilize-local-names (false)", "" );
     
+        if( phaseName.equals( "jb.dtr" ) )
+            return "Phase "+phaseName+":\n"+
+                "\nThis transformer detects cases in which the same code block is \ncovered by two different catch all traps with different \nexception handlers (A and B), and if there is at the same time a \nthird catch all trap that covers the second handler B and jumps \nto A, then the second trap is unnecessary, because it is already \ncovered by a combination of the other two traps. This \ntransformer removes the unnecessary trap. "
+                +"\n\nRecognized options (with default values):\n"
+                +padOpt( "enabled (true)", "" );
+    
+        if( phaseName.equals( "jb.ese" ) )
+            return "Phase "+phaseName+":\n"+
+                "\nThe Empty Switch Eliminator detects and removes switch \nstatements that have no data labels. Instead, the code is \ntransformed to contain a single jump statement to the default \nlabel. "
+                +"\n\nRecognized options (with default values):\n"
+                +padOpt( "enabled (true)", "" );
+    
         if( phaseName.equals( "jb.ls" ) )
             return "Phase "+phaseName+":\n"+
                 "\nThe Local Splitter identifies DU-UD webs for local variables \nand introduces new variables so that each disjoint web is \nassociated with a single local. "
@@ -1908,7 +2096,6 @@ public class Options extends OptionsBase {
                 "\nThe Type Assigner gives local variables types which will \naccommodate the values stored in them over the course of the \nmethod. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" )
-                +padOpt( "ignore-wrong-staticness (false)", "Ignores errors due to wrong staticness" )
                 +padOpt( "use-older-type-assigner (false)", "Enables the older type assigner" )
                 +padOpt( "compare-type-assigners (false)", "Compares Ben Bellamy's and the older type assigner" )
                 +padOpt( "ignore-nullpointer-dereferences (false)", "Ignores virtual method calls on base objects that may only be null" );
@@ -1930,7 +2117,7 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "jb.cp" ) )
             return "Phase "+phaseName+":\n"+
-                "\nThis phase performs cascaded copy propagation. If the \npropagator encounters situations of the form: A: a = ...; \n... B: x = a; ... C: ... = ... x; where a and x are \neach defined only once (at A and B, respectively), then it can \npropagate immediately without checking between B and C for \nredefinitions of a. In this case the propagator is global. \nOtherwise, if a has multiple definitions then the propagator \nchecks for redefinitions and propagates copies only within \nextended basic blocks. "
+                "\nThis phase performs cascaded copy \npropagation. If the propagator \nencounters situations of the form: A: a = ...; ... B: \nx = a; ... C: ... = ... x; where a and x are each \ndefined only once (at A and B, respectively), then it can \npropagate immediately without checking between B and C for \nredefinitions of a. In this case the propagator is global. \nOtherwise, if a has multiple definitions then the propagator \nchecks for redefinitions and propagates copies only within \nextended basic blocks. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" )
                 +padOpt( "only-regular-locals (false)", "" )
@@ -2023,7 +2210,7 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "jj.cp" ) )
             return "Phase "+phaseName+":\n"+
-                "\nThis phase performs cascaded copy propagation. If the \npropagator encounters situations of the form: A: a = ...; \n... B: x = a; ... C: ... = ... x; where a and x are \neach defined only once (at A and B, respectively), then it can \npropagate immediately without checking between B and C for \nredefinitions of a. In this case the propagator is global. \nOtherwise, if a has multiple definitions then the propagator \nchecks for redefinitions and propagates copies only within \nextended basic blocks. "
+                "\nThis phase performs cascaded copy \npropagation. If the propagator \nencounters situations of the form: A: a = ...; ... B: \nx = a; ... C: ... = ... x; where a and x are each \ndefined only once (at A and B, respectively), then it can \npropagate immediately without checking between B and C for \nredefinitions of a. In this case the propagator is global. \nOtherwise, if a has multiple definitions then the propagator \nchecks for redefinitions and propagates copies only within \nextended basic blocks. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" )
                 +padOpt( "only-regular-locals (false)", "" )
@@ -2063,9 +2250,16 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "wjpp" ) )
             return "Phase "+phaseName+":\n"+
-                "\nThis pack allows you to insert pre-processors that are run \nbefore call-graph construction. Only enabled in whole-program \nmode. In an unmodified copy of Soot, this pack is empty."
+                "\nThis pack allows you to insert pre-processors that are run \nbefore call-graph construction. Only enabled in whole-program \nmode."
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" );
+    
+        if( phaseName.equals( "wjpp.cimbt" ) )
+            return "Phase "+phaseName+":\n"+
+                "\nWhen using the types-for-invoke option of the cg phase, problems \nmight occur if the base object of a call to \nMethod.invoke() (the first argument) is a string constant. 				 \nThis option replaces all string constants of \nsuch calls by locals and, therefore, allows the \nstatic resolution of reflective call targets on constant string \nobjects. "
+                +"\n\nRecognized options (with default values):\n"
+                +padOpt( "enabled (false)", "" )
+                +padOpt( "verbose (false)", "" );
     
         if( phaseName.equals( "wspp" ) )
             return "Phase "+phaseName+":\n"+
@@ -2083,9 +2277,9 @@ public class Options extends OptionsBase {
                 +padOpt( "library", " 										Specifies whether the target classes should be treated as an application or a library. 									" )
                 +padVal( "disabled (default)", " 											Call(and pointer assignment) graph construction treat the target classes as application starting from the entry points. 										" )
                 
-                +padVal( "any-subtype", " 											In this mode types of any accessible field, method parameter, this local, or caugth exception is set to any possible sub type  											according to the class hierarchy of the target library. 										" )
+                +padVal( "any-subtype", "                                             In this mode types of any accessible field, method parameter, this local, or                                             caugth exception is set to any possible sub type 											according to the class hierarchy of the target library. 										" )
                 
-                +padVal( "signature-resolution", " 											In this mode types of any accessible field, method parameter, this local, or caugth exception is set to any possible sub type  											according to a possible extended class hierarchy of the target library. 										" )
+                +padVal( "signature-resolution", "                                             In this mode types of any accessible field, method parameter, this local, or                                             caugth exception is set to any possible sub type 											according to a possible extended class hierarchy of the target library. 										" )
                 
                 +padOpt( "verbose (false)", "Print warnings about where the call graph may be incomplete" )
                 +padOpt( "jdkver (3)", "JDK version for native methods" )
@@ -2461,19 +2655,19 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "wjap.umt" ) )
             return "Phase "+phaseName+":\n"+
-                "\nUses the call graph to determine which methods are unreachable \nand adds color tags so they can be highlighted in a source \nbrowser."
+                "\nUses the call graph to determine which methods are unreachable \nand adds color tags so they can be \nhighlighted in a source browser. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (false)", "" );
     
         if( phaseName.equals( "wjap.uft" ) )
             return "Phase "+phaseName+":\n"+
-                "\nUses the call graph to determine which fields are unreachable \nand adds color tags so they can be highlighted in a source \nbrowser."
+                "\nUses the call graph to determine which fields are unreachable \nand adds color tags so they can be \nhighlighted in a source browser. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (false)", "" );
     
         if( phaseName.equals( "wjap.tqt" ) )
             return "Phase "+phaseName+":\n"+
-                "\nDetermines which methods and fields have qualifiers that could \nbe tightened. For example: if a field or method has the \nqualifier of public but is only used within the declaring class \nit could be private. This, this field or method is tagged with \ncolor tags so that the results can be highlighted in a source \nbrowser."
+                "\nDetermines which methods and fields have qualifiers that could \nbe tightened. For example: if a \nfield or method has the qualifier of public but is only used \nwithin the declaring class it could \nbe private. This, this field or method is tagged with color tags \nso that the results can be \nhighlighted in a source browser. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (false)", "" );
     
@@ -2486,7 +2680,7 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "wjap.purity" ) )
             return "Phase "+phaseName+":\n"+
-                "\nPurity anaysis implemented by Antoine Mine and based on the \npaper A Combined Pointer and Purity Analysis for Java Programs \nby Alexandru Salcianu and Martin Rinard. "
+                "\nPurity anaysis implemented by Antoine Mine and based on the \npaper A Combined Pointer and Purity Analysis for \nJava Programs by Alexandru Salcianu and Martin Rinard. \n"
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (false)", "" )
                 +padOpt( "dump-summaries (true)", "" )
@@ -2773,7 +2967,7 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "gb.a2" ) )
             return "Phase "+phaseName+":\n"+
-                "\nThe Grimp Post-folding Aggregator combines local variables \nafter constructors have been folded. Constructor folding \ntypically introduces new opportunities for aggregation, since \nwhen a sequence of instructions like r2 = new \njava.util.ArrayList; r2.init(); r3 = r2 is replaced by r2 = new \njava.util.ArrayList(); r3 = r2 the invocation of init no longer \nrepresents a potential side-effect separating the two \ndefinitions, so they can be combined into r3 = new \njava.util.ArrayList(); (assuming there are no subsequent uses of \nr2). "
+                "\nThe Grimp Post-folding Aggregator combines local variables \nafter constructors have been folded. Constructor folding \ntypically introduces new opportunities for aggregation, since \nwhen a sequence of instructions like r2 = new \njava.util.ArrayList; r2.init(); r3 = r2 is replaced by r2 = new \njava.util.ArrayList(); r3 = r2 the invocation of \ninit \nno longer represents a potential side-effect separating the two \ndefinitions, so they can be combined into r3 = new \njava.util.ArrayList(); (assuming there are no subsequent uses of \nr2). "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" )
                 +padOpt( "only-stack-locals (true)", "" );
@@ -2798,7 +2992,7 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "bb.lso" ) )
             return "Phase "+phaseName+":\n"+
-                "\nThe Load Store Optimizer replaces some combinations of loads to \nand stores from local variables with stack instructions. A \nsimple example would be the replacement of store.r $r2; load.r \n$r2; with dup1.r in cases where the value of r2 is not used \nsubsequently. "
+                "\nThe Load Store Optimizer replaces some combinations of loads to \nand stores from local variables with stack instructions. A \nsimple example would be the replacement of store.r $r2; load.r \n$r2; with dup1.r in cases where the \nvalue of r2 is not used subsequently. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" )
                 +padOpt( "debug (false)", "" )
@@ -2871,7 +3065,7 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "db" ) )
             return "Phase "+phaseName+":\n"+
-                "\nThe decompile (Dava) option is set using the -f dava options in \nSoot. Options provided by Dava are added to this dummy phase so \nas not to clutter the soot general arguments. -p db (option \nname):(value) will be used to set all required values for Dava. \n"
+                "\nThe decompile (Dava) option is set using the -f dava options in \nSoot. Options provided by Dava are added to this dummy phase so \nas not to clutter the soot general arguments. \n-p db (option name):(value) will be used to set all required \nvalues for Dava. "
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" )
                 +padOpt( "source-is-javac (true)", "" );
@@ -2890,13 +3084,13 @@ public class Options extends OptionsBase {
     
         if( phaseName.equals( "db.deobfuscate" ) )
             return "Phase "+phaseName+":\n"+
-                "\nCertain analyses make sense only when the bytecode is obfuscated \ncode. There are plans to implement such analyses and apply them \non methods only if this flag is set. Dead Code elimination \nwhich includes removing code guarded by some condition which is \nalways false or always true is one such analysis. Another \nsuggested analysis is giving default names to classes and \nfields. Onfuscators love to use weird names for fields and \nclasses and even a simple re-naming of these could be a good \nhelp to the user. Another more advanced analysis would be to \ncheck for redundant constant fields added by obfuscators and \nthen remove uses of these constant fields from the code."
+                "\nCertain analyses make sense only when the bytecode is obfuscated \ncode. There are plans to implement such \nanalyses and apply them on methods only if this flag is set. \nDead Code elimination which includes removing code guarded by \nsome condition which is always false or always true is one such \nanalysis. Another suggested analysis is giving default names to \nclasses and fields. Onfuscators love to use weird names \nfor fields and classes and even a simple \nre-naming of these could be a good help to the user. \nAnother more advanced analysis would be to check for \nredundant constant fields added by \nobfuscators and then remove uses of these constant fields from \nthe code."
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" );
     
         if( phaseName.equals( "db.force-recompile" ) )
             return "Phase "+phaseName+":\n"+
-                "\nWhile decompiling we have to be clear what our aim is: do we \nwant to convert bytecode to Java syntax and stay as close to the \nactual execution of bytecode or do we want recompilably Java \nsource representing the bytecode. This distinction is important \nbecause some restrictions present in Java source are absent from \nthe bytecode. Examples of this include that fact that in Java a \ncall to a constructor or super needs to be the first statement \nin a constructors body. This restriction is absent from the \nbytecode. Similarly final fields HAVE to be initialized once and \nonly once in either the static initializer (static fields) or \nall the constructors (non-static fields). Additionally the \nfields should be initialized on all possible execution paths. \nThese restrictions are again absent from the bytecode. In doing \na one-one conversion of bytecode to Java source then no attempt \nshould be made to fix any of these and similar problems in the \nJava source. However, if the aim is to get recompilable code \nthen these and similar issues need to be fixed. Setting the \nforce-recompilability flag will ensure that the decompiler tries \nits best to produce recompilable Java source."
+                "\nWhile decompiling we have to be clear what our aim is: do we \nwant to convert bytecode to Java syntax and stay as close to the \nactual execution of bytecode or do we want recompilably Java \nsource representing the bytecode. This distinction is important \nbecause some restrictions present in Java source are absent from \nthe bytecode. Examples of this include that fact that in Java a \ncall to a constructor or super needs to be the first statement \nin a constructors body. This restriction is absent from the \nbytecode. Similarly final fields HAVE to be initialized once and \nonly once in either the static initializer (static fields) or \nall the constructors (non-static fields). Additionally the \nfields should be initialized on all possible execution paths. \nThese restrictions are again absent from the bytecode. In doing \na one-one conversion of bytecode to Java source then no attempt \nshould be made to fix any of these and similar problems \nin the Java source. However, if the aim is to get \nrecompilable code then these and similar \nissues need to be fixed. Setting the force-recompilability flag \nwill ensure that the decompiler tries its best to produce \nrecompilable Java source."
                 +"\n\nRecognized options (with default values):\n"
                 +padOpt( "enabled (true)", "" );
     
@@ -2912,6 +3106,14 @@ public class Options extends OptionsBase {
                 +"use-original-names "
                 +"preserve-source-annotations "
                 +"stabilize-local-names ";
+    
+        if( phaseName.equals( "jb.dtr" ) )
+            return ""
+                +"enabled ";
+    
+        if( phaseName.equals( "jb.ese" ) )
+            return ""
+                +"enabled ";
     
         if( phaseName.equals( "jb.ls" ) )
             return ""
@@ -2929,7 +3131,6 @@ public class Options extends OptionsBase {
         if( phaseName.equals( "jb.tr" ) )
             return ""
                 +"enabled "
-                +"ignore-wrong-staticness "
                 +"use-older-type-assigner "
                 +"compare-type-assigners "
                 +"ignore-nullpointer-dereferences ";
@@ -3041,6 +3242,11 @@ public class Options extends OptionsBase {
         if( phaseName.equals( "wjpp" ) )
             return ""
                 +"enabled ";
+    
+        if( phaseName.equals( "wjpp.cimbt" ) )
+            return ""
+                +"enabled "
+                +"verbose ";
     
         if( phaseName.equals( "wspp" ) )
             return ""
@@ -3534,6 +3740,14 @@ public class Options extends OptionsBase {
               +"preserve-source-annotations:false "
               +"stabilize-local-names:false ";
     
+        if( phaseName.equals( "jb.dtr" ) )
+            return ""
+              +"enabled:true ";
+    
+        if( phaseName.equals( "jb.ese" ) )
+            return ""
+              +"enabled:true ";
+    
         if( phaseName.equals( "jb.ls" ) )
             return ""
               +"enabled:true ";
@@ -3550,7 +3764,6 @@ public class Options extends OptionsBase {
         if( phaseName.equals( "jb.tr" ) )
             return ""
               +"enabled:true "
-              +"ignore-wrong-staticness:false "
               +"use-older-type-assigner:false "
               +"compare-type-assigners:false "
               +"ignore-nullpointer-dereferences:false ";
@@ -3662,6 +3875,11 @@ public class Options extends OptionsBase {
         if( phaseName.equals( "wjpp" ) )
             return ""
               +"enabled:true ";
+    
+        if( phaseName.equals( "wjpp.cimbt" ) )
+            return ""
+              +"enabled:false "
+              +"verbose:false ";
     
         if( phaseName.equals( "wspp" ) )
             return ""
@@ -4148,6 +4366,8 @@ public class Options extends OptionsBase {
     public void warnForeignPhase( String phaseName ) {
     
         if( phaseName.equals( "jb" ) ) return;
+        if( phaseName.equals( "jb.dtr" ) ) return;
+        if( phaseName.equals( "jb.ese" ) ) return;
         if( phaseName.equals( "jb.ls" ) ) return;
         if( phaseName.equals( "jb.a" ) ) return;
         if( phaseName.equals( "jb.ule" ) ) return;
@@ -4175,6 +4395,7 @@ public class Options extends OptionsBase {
         if( phaseName.equals( "jj.ne" ) ) return;
         if( phaseName.equals( "jj.uce" ) ) return;
         if( phaseName.equals( "wjpp" ) ) return;
+        if( phaseName.equals( "wjpp.cimbt" ) ) return;
         if( phaseName.equals( "wspp" ) ) return;
         if( phaseName.equals( "cg" ) ) return;
         if( phaseName.equals( "cg.cha" ) ) return;
@@ -4262,6 +4483,10 @@ public class Options extends OptionsBase {
     
         if( !PackManager.v().hasPhase( "jb" ) )
             G.v().out.println( "Warning: Options exist for non-existent phase jb" );
+        if( !PackManager.v().hasPhase( "jb.dtr" ) )
+            G.v().out.println( "Warning: Options exist for non-existent phase jb.dtr" );
+        if( !PackManager.v().hasPhase( "jb.ese" ) )
+            G.v().out.println( "Warning: Options exist for non-existent phase jb.ese" );
         if( !PackManager.v().hasPhase( "jb.ls" ) )
             G.v().out.println( "Warning: Options exist for non-existent phase jb.ls" );
         if( !PackManager.v().hasPhase( "jb.a" ) )
@@ -4316,6 +4541,8 @@ public class Options extends OptionsBase {
             G.v().out.println( "Warning: Options exist for non-existent phase jj.uce" );
         if( !PackManager.v().hasPhase( "wjpp" ) )
             G.v().out.println( "Warning: Options exist for non-existent phase wjpp" );
+        if( !PackManager.v().hasPhase( "wjpp.cimbt" ) )
+            G.v().out.println( "Warning: Options exist for non-existent phase wjpp.cimbt" );
         if( !PackManager.v().hasPhase( "wspp" ) )
             G.v().out.println( "Warning: Options exist for non-existent phase wspp" );
         if( !PackManager.v().hasPhase( "cg" ) )

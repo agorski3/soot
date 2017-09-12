@@ -181,7 +181,7 @@ public class Main {
 				sb.append("Follow these steps to fix the problem:\n");
 				sb.append("1.) Are you sure you used the right command line?\n");
 				sb.append("    Click here to double-check:\n");
-				sb.append("    https://ssebuild.cased.de/nightly/soot/doc/soot_options.htm\n");
+				sb.append("    https://soot-build.cs.uni-paderborn.de/doc/sootoptions/\n");
 				sb.append("\n");
 				sb.append("2.) Not sure whether it's a bug? Feel free to discuss\n");
 				sb.append("    the issue on the Soot mailing list:\n");
@@ -320,7 +320,7 @@ public class Main {
 
 		//if phantom refs enabled,  ignore wrong staticness in type assigner
 		if(Options.v().allow_phantom_refs()) {
-			PhaseOptions.v().setPhaseOption("jb.tr", "ignore-wrong-staticness:true");
+			Options.v().set_wrong_staticness(Options.wrong_staticness_fix);
 		}
 	}
 }

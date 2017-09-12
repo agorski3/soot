@@ -24,6 +24,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -255,41 +256,57 @@ public class BytecodeHierarchy implements IHierarchy
 			child, ancestor);
 	}
 	
-	private static Deque<RefType> superclassPath(RefType t)
+	private static Deque<RefType> superclassPath(RefType t, RefType anchor)
 	{
+		// This method assumes the current class hierarchy does not contain
+		// duplicates and then ensures adding anchor does not add duplicates
 		Deque<RefType> r = new ArrayDeque<RefType>();
 		r.addFirst(t);
+		if (t.getSootClass().isPhantom() && anchor != null) {
+			// Make sure the anchor is not added twice in the case where 
+			// t is the anchor
+			if(!TypeResolver.typesEqual(t, anchor))
+				r.addFirst(anchor);
+			return r;
+		}
 		
 		SootClass sc = t.getSootClass();
 		while ( sc.hasSuperclass() )
 		{
 			sc = sc.getSuperclass();
-			r.addFirst(sc.getType());
+			RefType cur = sc.getType();
+			r.addFirst(cur);
+			if (sc.isPhantom() && anchor != null) {
+				// Make sure the anchor is not added twice in the case where 
+				// the current class is the anchor
+				if(!TypeResolver.typesEqual(cur, anchor))
+					r.addFirst(anchor);
+				break;
+			}
+		}
+		
+		// Make sure that if the anchor appears in the front, it is the only
+		// time it appears in the queue
+		Iterator<RefType> it = r.iterator();
+		RefType anchorQ = it.next();
+		if(TypeResolver.typesEqual(anchor, anchorQ)) {
+			while(it.hasNext()) {
+				RefType cur = it.next();
+				if(TypeResolver.typesEqual(cur, anchor))
+					it.remove();
+			}
 		}
 		
 		return r;
 	}
 	
-	public static RefType lcsc(RefType a, RefType b, Collection<RefType> knownSupers) {
+	public static RefType lcsc(RefType a, RefType b)
+	{
 		if (a == b)
 			return a;
 		
-		Deque<RefType> pathA = superclassPath(a);
-		Deque<RefType> pathB = superclassPath(b);
-		if(knownSupers != null) {
-			Deque<RefType> temp = new ArrayDeque<RefType>(knownSupers);
-			for(RefType t : pathA) {
-				if(!temp.contains(t))
-					temp.add(t);
-			}
-			pathA = temp;
-			temp = new ArrayDeque<RefType>(knownSupers);
-			for(RefType t : pathB) {
-				if(!temp.contains(t))
-					temp.add(t);
-			}
-			pathB = temp;
-		}
+		Deque<RefType> pathA = superclassPath(a, null);
+		Deque<RefType> pathB = superclassPath(b, null);
 		RefType r = null;
 		while ( !(pathA.isEmpty() || pathB.isEmpty()) 
 			&& TypeResolver.typesEqual(pathA.getFirst(), pathB.getFirst()) )
@@ -299,4 +316,22 @@ public class BytecodeHierarchy implements IHierarchy
 		}
 		return r;
 	}
+
+	public static RefType lcsc(RefType a, RefType b, RefType anchor)
+	{
+		if (a == b)
+			return a;
+		
+		Deque<RefType> pathA = superclassPath(a, anchor);
+		Deque<RefType> pathB = superclassPath(b, anchor);
+		RefType r = null;
+		while ( !(pathA.isEmpty() || pathB.isEmpty()) 
+			&& TypeResolver.typesEqual(pathA.getFirst(), pathB.getFirst()) )
+		{
+			r = pathA.removeFirst();
+			pathB.removeFirst();
+		}
+		return r;
+	}
+
 }

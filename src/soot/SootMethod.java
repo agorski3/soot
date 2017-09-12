@@ -34,16 +34,16 @@ import java.util.StringTokenizer;
 import soot.dava.DavaBody;
 import soot.dava.toolkits.base.renamer.RemoveFullyQualifiedName;
 import soot.jimple.toolkits.callgraph.VirtualCalls;
+import soot.options.Options;
 import soot.tagkit.AbstractHost;
 import soot.util.IterableSet;
 import soot.util.Numberable;
 import soot.util.NumberedString;
 
-/**
-    Soot representation of a Java method.  Can be declared to belong to a SootClass. 
-    Does not contain the actual code, which belongs to a Body.
-    The getActiveBody() method points to the currently-active body.
-*/
+/** Soot representation of a Java method.  Can be declared to belong to a SootClass. 
+ * Does not contain the actual code, which belongs to a Body.
+ * The getActiveBody() method points to the currently-active body.
+ */
 public class SootMethod 
     extends AbstractHost
     implements ClassMember, Numberable, MethodOrMethodContext {
@@ -76,10 +76,10 @@ public class SootMethod
     private List<SootClass> exceptions = null;
 
     /** Active body associated with this method. */
-    private Body activeBody;
+    private volatile Body activeBody;
 
     /** Tells this method how to find out where its body lives. */
-    protected MethodSource ms;
+    protected volatile MethodSource ms;
     
     private volatile String sig;
     private volatile String subSig;
@@ -89,9 +89,37 @@ public class SootMethod
      *
      * @param phaseName       Phase name for body loading. */
     private Body getBodyFromMethodSource(String phaseName) {
-    	if (ms == null)
-    		throw new RuntimeException("No method source set for method " + this.getSignature());
-        return ms.getBody(this, phaseName);
+    	// We get a copy of the field value just in case another thread
+    	// overwrites the method source in the meantime. We then check
+    	// again whether we really need to load anything.
+    	//
+    	// The loader does something like this:
+    	//		(1) <a lot of stuff>
+    	// 		(2) activeBody = ...;
+    	//		(3) ms = null;
+    	//
+    	// We need to avoid the situation in which we don't have a body yet,
+    	// trigger the loader, and then another thread triggers
+    	// retrieveActiveBody() again. If the first loader is between
+    	// statements (2) and (3), we would pass the check on the body, but
+    	// but then find that the method source is already gone when the other
+    	// thread finally passes statement (3) before we attempt to use the
+    	// method source here.
+    	
+    	MethodSource ms = this.ms;
+    	
+    	// Method sources are not expected to be thread safe
+    	synchronized (this) {
+	    	if (this.activeBody == null) {
+		    	if (ms == null)
+		    		throw new RuntimeException("No method source set for method " + this.getSignature());
+		    	
+		    	// Method sources are not expected to be thread safe
+	    		return ms.getBody(this, phaseName);
+	    	}
+	    	else
+	    		return this.activeBody;
+    	}
     }
 
     /** Sets the MethodSource of the current SootMethod. */
@@ -148,9 +176,10 @@ public class SootMethod
             DEBUG=false;
             */
         }
-        
         Scene.v().getMethodNumberer().add(this);
-        subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+        subsignature =
+            Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+        
         
     }
 
@@ -290,8 +319,7 @@ public class SootMethod
         if( wasDeclared) oldDeclaringClass.addMethod(this);
     }
 
-    /**
-        Retrieves the active body for this method.
+    /** Retrieves the active body for this method.
      */
     @SuppressWarnings("deprecation")
 	public Body getActiveBody() {
@@ -330,11 +358,15 @@ public class SootMethod
         
         Body b = this.getBodyFromMethodSource("jb");
         setActiveBody(b);
+        
+        // If configured, we drop the method source to save memory
+        if (Options.v().drop_bodies_after_load())
+        	ms = null;
+        
         return b;
     }
 
-    /**
-        Sets the active body for this method. 
+    /** Sets the active body for this method. 
      */
     public void setActiveBody(Body body) {
         if ((declaringClass != null)
@@ -545,9 +577,8 @@ public class SootMethod
         return buffer.toString().intern();
     }
 
-    /**
-        Returns the signature of this method in the format in which it appears
-        in bytecode (eg. [Ljava/lang/Object instead of java.lang.Object[]).
+    /** Returns the signature of this method in the format in which it appears
+     * in bytecode (eg. [Ljava/lang/Object instead of java.lang.Object[]).
      */
     public String getBytecodeSignature() {
         String name = getName();
@@ -562,8 +593,7 @@ public class SootMethod
         return buffer.toString().intern();
     }
 
-    /**
-        Returns the Soot signature of this method.  Used to refer to methods unambiguously.
+    /** Returns the Soot signature of this method.  Used to refer to methods unambiguously.
      */
     public String getSignature() {
     	if(sig == null) {
@@ -589,8 +619,7 @@ public class SootMethod
          return buffer.toString().intern();
     }
 
-    /**
-        Returns the Soot subsignature of this method.  Used to refer to methods unambiguously.
+    /** Returns the Soot subsignature of this method.  Used to refer to methods unambiguously.
      */
     public String getSubSignature() {
         if(subSig == null) {

@@ -180,6 +180,10 @@ public class AntTask extends MatchingTask {
             if(arg) addArg("-debug-resolver");
         }
   
+        public void setignore_resolving_levels(boolean arg) {
+            if(arg) addArg("-ignore-resolving-levels");
+        }
+  
         public void setsoot_classpath(String arg) {
             addArg("-soot-classpath");
             addArg(arg);
@@ -274,6 +278,10 @@ public class AntTask extends MatchingTask {
   
         public void setpermissive_resolving(boolean arg) {
             if(arg) addArg("-permissive-resolving");
+        }
+  
+        public void setdrop_bodies_after_load(boolean arg) {
+            if(arg) addArg("-drop-bodies-after-load");
         }
   
         public void setoutput_dir(String arg) {
@@ -418,6 +426,35 @@ public class AntTask extends MatchingTask {
             return plugin.createPath();
         }
   
+        public void setwrong_staticness(String arg) {
+            if(false
+    
+                || arg.equals( "fail" )
+                || arg.equals( "ignore" )
+                || arg.equals( "fix" )
+                || arg.equals( "fixstrict" )
+                ) {
+                addArg("-wrong-staticness");
+                addArg(arg);
+            } else {
+                throw new BuildException("Bad value "+arg+" for option wrong_staticness");
+            }
+        }
+  
+        public void setfield_type_mismatches(String arg) {
+            if(false
+    
+                || arg.equals( "fail" )
+                || arg.equals( "ignore" )
+                || arg.equals( "null" )
+                ) {
+                addArg("-field-type-mismatches");
+                addArg(arg);
+            } else {
+                throw new BuildException("Bad value "+arg+" for option field_type_mismatches");
+            }
+        }
+  
         public void setoptimize(boolean arg) {
             if(arg) addArg("-optimize");
         }
@@ -439,6 +476,7 @@ public class AntTask extends MatchingTask {
     
                 || arg.equals( "pedantic" )
                 || arg.equals( "unit" )
+                || arg.equals( "dalvik" )
                 ) {
                 addArg("-throw-analysis");
                 addArg(arg);
@@ -615,6 +653,36 @@ public class AntTask extends MatchingTask {
       
         }
     
+        public Object createp_jb_dtr() {
+            Object ret = new PhaseOptjb_dtr();
+            phaseopts.add(ret);
+            return ret;
+        }
+        public class PhaseOptjb_dtr {
+      
+          public void setenabled(boolean arg) {
+            addArg("-p");
+            addArg("jb.dtr");
+            addArg("enabled:"+(arg?"true":"false"));
+          }
+      
+        }
+    
+        public Object createp_jb_ese() {
+            Object ret = new PhaseOptjb_ese();
+            phaseopts.add(ret);
+            return ret;
+        }
+        public class PhaseOptjb_ese {
+      
+          public void setenabled(boolean arg) {
+            addArg("-p");
+            addArg("jb.ese");
+            addArg("enabled:"+(arg?"true":"false"));
+          }
+      
+        }
+    
         public Object createp_jb_ls() {
             Object ret = new PhaseOptjb_ls();
             phaseopts.add(ret);
@@ -677,12 +745,6 @@ public class AntTask extends MatchingTask {
             addArg("-p");
             addArg("jb.tr");
             addArg("enabled:"+(arg?"true":"false"));
-          }
-      
-          public void setignore_wrong_staticness(boolean arg) {
-            addArg("-p");
-            addArg("jb.tr");
-            addArg("ignore-wrong-staticness:"+(arg?"true":"false"));
           }
       
           public void setuse_older_type_assigner(boolean arg) {
@@ -1142,6 +1204,27 @@ public class AntTask extends MatchingTask {
             addArg("-p");
             addArg("wjpp");
             addArg("enabled:"+(arg?"true":"false"));
+          }
+      
+        }
+    
+        public Object createp_wjpp_cimbt() {
+            Object ret = new PhaseOptwjpp_cimbt();
+            phaseopts.add(ret);
+            return ret;
+        }
+        public class PhaseOptwjpp_cimbt {
+      
+          public void setenabled(boolean arg) {
+            addArg("-p");
+            addArg("wjpp.cimbt");
+            addArg("enabled:"+(arg?"true":"false"));
+          }
+      
+          public void setverbose(boolean arg) {
+            addArg("-p");
+            addArg("wjpp.cimbt");
+            addArg("verbose:"+(arg?"true":"false"));
           }
       
         }

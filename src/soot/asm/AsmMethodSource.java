@@ -1102,7 +1102,7 @@ final class AsmMethodSource implements MethodSource {
 		else if (val instanceof String)
 			v = StringConstant.v(val.toString());
 		else if (val instanceof org.objectweb.asm.Type)
-			v = ClassConstant.v(((org.objectweb.asm.Type) val).getInternalName());
+			v = ClassConstant.v(((org.objectweb.asm.Type) val).getDescriptor());
 		else if (val instanceof Handle)
 			v = MethodHandle.v(toSootMethodRef((Handle) val), ((Handle)val).getTag());
 		else
@@ -1261,14 +1261,15 @@ final class AsmMethodSource implements MethodSource {
 			Operand[] args = new Operand[types.length - 1];
 			ValueBox[] boxes = new ValueBox[args.length];
 
+			// Beware: Call stack is FIFO, Jimple is linear
 			int nrArgs = args.length;
 			while (nrArgs-- != 0) {
 				parameterTypes.add(types[nrArgs]);
-				args[nrArgs] = popImmediate(types[nrArgs]);
-				methodArgs.add(args[nrArgs].stackOrValue());				
+				
+				Operand curOperand = popImmediate(types[nrArgs]);
+				args[args.length - nrArgs - 1] = curOperand;
+				methodArgs.add(curOperand.stackOrValue());				
 			}
-			if (methodArgs.size() > 1)
-				Collections.reverse(methodArgs);	// Call stack is FIFO, Jimple is linear
 			
 			returnType = types[types.length - 1];
 			
@@ -1858,6 +1859,7 @@ final class AsmMethodSource implements MethodSource {
 		return null;
 	}
 
+	@Override
 	public Body getBody(SootMethod m, String phaseName) {
 		if (!m.isConcrete())
 			return null;
