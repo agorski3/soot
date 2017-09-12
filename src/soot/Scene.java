@@ -1429,6 +1429,9 @@ public class Scene  //extends AbstractHost
         rn.add("from");
         rn.add("to");
         rn.add("with");
+        rn.add("cls");
+        rn.add("dynamicinvoke");
+        rn.add("strictfp");
     }
 
     private final Set<String>[] basicclasses=new Set[4];
