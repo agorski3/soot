@@ -58,7 +58,6 @@ import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
-import soot.PackManager;
 import soot.PhaseOptions;
 import soot.PrimType;
 import soot.RefType;

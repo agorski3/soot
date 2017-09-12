@@ -646,8 +646,8 @@ public class SootClass extends AbstractHost implements Numberable {
 			return old;
 
 		fields.add(f);
-		f.isDeclared = true;
-		f.declaringClass = this;
+		f.setDeclared(true);
+		f.setDeclaringClass(this);
 		return f;
 	}
 
