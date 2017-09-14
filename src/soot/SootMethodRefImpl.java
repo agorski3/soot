@@ -138,8 +138,8 @@ class SootMethodRefImpl implements SootMethodRef {
 
 	private SootMethod checkStatic(SootMethod ret) {
 		if (ret.isStatic() != isStatic()) {
-			if (Options.v().wrong_staticness() != Options.wrong_staticness_ignore
-					&& Options.v().wrong_staticness() != Options.wrong_staticness_fixstrict) {
+			if(Options.v().wrong_staticness() == Options.wrong_staticness_fail 
+					|| Options.v().wrong_staticness() == Options.wrong_staticness_fixstrict) {
 				throw new ResolutionFailedException("Resolved " + this + " to " + ret + " which has wrong static-ness");
 			}
 		}

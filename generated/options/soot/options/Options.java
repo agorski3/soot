@@ -1676,7 +1676,6 @@ public class Options extends OptionsBase {
     public void set_plugin( List<String> setting ) { plugin = setting; }
     private List<String> plugin = null;
     public int wrong_staticness() {
-        if( wrong_staticness == 0 ) return wrong_staticness_fix;
         if( wrong_staticness == 0 ) return wrong_staticness_fixstrict;
         return wrong_staticness; 
     }
