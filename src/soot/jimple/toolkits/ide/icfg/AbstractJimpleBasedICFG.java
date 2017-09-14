@@ -102,7 +102,7 @@ public abstract class AbstractJimpleBasedICFG implements BiDiInterproceduralCFG<
 
 	protected DirectedGraph<Unit> makeGraph(Body body) {
 		return enableExceptions
-				? new ExceptionalUnitGraph(body, UnitThrowAnalysis.v() ,true)
+				? new ExceptionalUnitGraph(body)
 				: new BriefUnitGraph(body);
 	}
 
