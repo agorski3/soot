@@ -256,46 +256,29 @@ public class BytecodeHierarchy implements IHierarchy
 			child, ancestor);
 	}
 	
-	private static Deque<RefType> superclassPath(RefType t, RefType anchor)
-	{
-		// This method assumes the current class hierarchy does not contain
-		// duplicates and then ensures adding anchor does not add duplicates
+	/* Returns a list of the super classes of a given type in which the anchor
+	 * will always be the first element even when the types class is phantom.
+	 * Note anchor should always be type Throwable as this is the root of all
+	 * exception types.
+	 */
+	private static Deque<RefType> superclassPath(RefType t, RefType anchor) {
 		Deque<RefType> r = new ArrayDeque<RefType>();
 		r.addFirst(t);
-		if (t.getSootClass().isPhantom() && anchor != null) {
-			// Make sure the anchor is not added twice in the case where 
-			// t is the anchor
-			if(!TypeResolver.typesEqual(t, anchor))
-				r.addFirst(anchor);
+		
+		if(TypeResolver.typesEqual(t, anchor))
 			return r;
-		}
 		
 		SootClass sc = t.getSootClass();
-		while ( sc.hasSuperclass() )
-		{
+		while(sc.hasSuperclass()) {
 			sc = sc.getSuperclass();
 			RefType cur = sc.getType();
 			r.addFirst(cur);
-			if (sc.isPhantom() && anchor != null) {
-				// Make sure the anchor is not added twice in the case where 
-				// the current class is the anchor
-				if(!TypeResolver.typesEqual(cur, anchor))
-					r.addFirst(anchor);
+			if(TypeResolver.typesEqual(cur, anchor))
 				break;
-			}
 		}
 		
-		// Make sure that if the anchor appears in the front, it is the only
-		// time it appears in the queue
-		Iterator<RefType> it = r.iterator();
-		RefType anchorQ = it.next();
-		if(TypeResolver.typesEqual(anchor, anchorQ)) {
-			while(it.hasNext()) {
-				RefType cur = it.next();
-				if(TypeResolver.typesEqual(cur, anchor))
-					it.remove();
-			}
-		}
+		if(!TypeResolver.typesEqual(r.getFirst(), anchor))
+			r.addFirst(anchor);
 		
 		return r;
 	}
