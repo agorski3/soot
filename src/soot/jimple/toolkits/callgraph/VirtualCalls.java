@@ -104,7 +104,7 @@ public class VirtualCalls {
 
 		SootMethod m = cls.getMethodUnsafe(subSig);
 		if (m != null) {
-			if (m.isConcrete() || m.isNative() || m.isPhantom()) {
+			if (m.isConcrete()) {
 				ret = m;
 			}
 		} else {
@@ -274,7 +274,7 @@ public class VirtualCalls {
 		Chain<SootClass> classes = Scene.v().getClasses();
 		for (SootClass sc : classes) {
 			for (SootMethod sm : sc.getMethods()) {
-				if (sm.isConcrete() || sm.isNative()) {
+				if (sm.isConcrete()) {
 
 					// method name has to match
 					if (!sm.getName().equals(declaredName))
