@@ -695,7 +695,7 @@ public final class OnFlyCallGraphBuilder {
 	}
 
 	private void processNewMethod(SootMethod m) {
-		if (m.isConcrete()) {
+		if (!m.isConcrete()) {
 			return;
 		}
 		Body b = m.retrieveActiveBody();
@@ -761,7 +761,7 @@ public final class OnFlyCallGraphBuilder {
 
 	private void getImplicitTargets(SootMethod source) {
 		final SootClass scl = source.getDeclaringClass();
-		if (source.isConcrete())
+		if (!source.isConcrete())
 			return;
 		if (source.getSubSignature().indexOf("<init>") >= 0) {
 			handleInit(source, scl);
