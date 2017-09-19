@@ -517,6 +517,7 @@ public class PackManager {
 			PhaseDumper.v().dumpBefore("output");
 		if (Options.v().output_format() == Options.output_format_dava) {
 			postProcessDAVA();
+			outputDava();
 		} else if (Options.v().output_format() == Options.output_format_dex
 				|| Options.v().output_format() == Options.output_format_force_dex) {
 			writeDexOutput();
@@ -773,8 +774,6 @@ public class PackManager {
 		if (transformations) {
 			InterProceduralAnalyses.applyInterProceduralAnalyses();
 		}
-
-		outputDava();
 	}
 
 	private void outputDava() {
