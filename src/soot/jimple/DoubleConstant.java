@@ -48,7 +48,7 @@ public class DoubleConstant extends RealConstant
 
     public boolean equals(Object c)
     {
-        return (c instanceof DoubleConstant && ((DoubleConstant) c).value == this.value);
+        return (c instanceof DoubleConstant && Double.compare(((DoubleConstant) c).value, value) == 0);
     }
 
     /** Returns a hash code for this DoubleConstant object. */

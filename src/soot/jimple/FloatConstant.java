@@ -45,7 +45,7 @@ public class FloatConstant extends RealConstant
 
     public boolean equals(Object c)
     {
-        return c instanceof FloatConstant && ((FloatConstant) c).value == value;
+        return c instanceof FloatConstant && Float.compare(((FloatConstant) c).value, value) == 0;
     }
 
     /** Returns a hash code for this FloatConstant object. */
