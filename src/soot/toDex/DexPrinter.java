@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -327,11 +328,7 @@ public class DexPrinter {
 
 			String classT = SootToDexUtils.getDexClassName(e.getTypeName());
 			String fieldT = classT;
-
-			FieldReference fref = dexFile
-					.internFieldReference(new ImmutableFieldReference(classT, e.getConstantName(), fieldT));
-
-			return new ImmutableEnumEncodedValue(fref);
+			return new ImmutableEnumEncodedValue(new ImmutableFieldReference(classT, e.getConstantName(), fieldT));
 		}
 		case 'c': {
 			AnnotationClassElem e = (AnnotationClassElem) elem;
@@ -381,35 +378,26 @@ public class DexPrinter {
 
 			String fieldName = sp[2];
 
-			FieldReference fref = dexFile
-					.internFieldReference(new ImmutableFieldReference(classString, fieldName, typeString));
-			return new ImmutableFieldEncodedValue(fref);
+			return new ImmutableFieldEncodedValue(new ImmutableFieldReference(classString, fieldName, typeString));
 		}
 		case 'M': { // method (Dalvik specific?)
-			AnnotationStringElem e = (AnnotationStringElem) elem;
+	        AnnotationStringElem e = (AnnotationStringElem) elem;
 
-			String[] sp = e.getValue().split(" ");
-			String classString = SootToDexUtils.getDexClassName(sp[0].split(":")[0]);
-			if (classString.isEmpty())
-				throw new RuntimeException("Empty class name in annotation");
+	        String[] sp = e.getValue().split(" ");
+	        String classString = SootToDexUtils.getDexClassName(sp[0].split(":")[0]);
+	        if (classString.isEmpty()) {
+	          throw new RuntimeException("Empty class name in annotation");
+	        }
 
-			String returnType = sp[1];
-			String[] sp2 = sp[2].split("\\(");
-			String methodNameString = sp2[0];
+	        String returnType = sp[1];
+	        String[] sp2 = sp[2].split("\\(");
+	        String methodNameString = sp2[0];
 
-			String parameters = sp2[1].replaceAll("\\)", "");
-			List<String> paramTypeList = null;
-			if (!parameters.isEmpty()) {
-				paramTypeList = new ArrayList<String>();
-				if (parameters.length() > 0)
-					for (String p : parameters.split(",")) {
-						paramTypeList.add(p);
-					}
-			}
+	        String parameters = sp2[1].replaceAll("\\)", "");
+	        List<String> paramTypeList = parameters.isEmpty() ? null : Arrays.asList(parameters.split(","));
 
-			MethodReference mref = dexFile.internMethodReference(
-					new ImmutableMethodReference(classString, methodNameString, paramTypeList, returnType));
-			return new ImmutableMethodEncodedValue(mref);
+	        return new ImmutableMethodEncodedValue(
+	            new ImmutableMethodReference(classString, methodNameString, paramTypeList, returnType));
 		}
 		case 'N': { // null (Dalvik specific?)
 			return ImmutableNullEncodedValue.INSTANCE;
@@ -799,7 +787,7 @@ public class DexPrinter {
 
 		ImmutableMethodReference mRef = new ImmutableMethodReference(
 				SootToDexUtils.getDexClassName(t.getEnclosingClass()), t.getEnclosingMethod(), typeList, returnTypeS);
-		ImmutableMethodEncodedValue methodRef = new ImmutableMethodEncodedValue(dexFile.internMethodReference(mRef));
+		ImmutableMethodEncodedValue methodRef = new ImmutableMethodEncodedValue(mRef);
 		AnnotationElement methodElement = new ImmutableAnnotationElement("value", methodRef);
 
 		return new ImmutableAnnotation(AnnotationVisibility.SYSTEM, "Ldalvik/annotation/EnclosingMethod;",
