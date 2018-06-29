@@ -26,10 +26,14 @@ package soot;
 
 /** A class to group together all the global variables in Soot. */
 <<<<<<< HEAD
+<<<<<<< HEAD
 @javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-06-18T10:34:55.562-04:00", comments = "from singletons.xml")
 =======
 @javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-08-04T23:39:16.746-04:00", comments = "from singletons.xml")
 >>>>>>> 4729f9013... Add option for enabling phantom fields and methods in non-phantom classes
+=======
+@javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-06-29T13:00:47.698-04:00", comments = "from singletons.xml")
+>>>>>>> ba414c1af... Added new option and fixed styling.
 public class Singletons {
 
     public final class Global {
