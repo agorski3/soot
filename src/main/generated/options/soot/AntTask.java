@@ -34,7 +34,7 @@ import java.util.*;
  * Soot ant task.
  * @author Ondrej Lhotak
  */
-@javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-06-18T10:30:24.079-04:00", comments = "from soot_options.xml")
+@javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-08-06T11:18:13.313-04:00", comments = "from soot_options.xml")
 public class AntTask extends MatchingTask {
     public static final boolean DEBUG = true;
     private void debug(String s) {
@@ -263,6 +263,10 @@ public class AntTask extends MatchingTask {
   
         public void setallow_phantom_refs(boolean arg) {
             if(arg) addArg("-allow-phantom-refs");
+        }
+  
+        public void setallow_phantom_elms(boolean arg) {
+            if(arg) addArg("-allow-phantom-elms");
         }
   
         public void setno_bodies_for_excluded(boolean arg) {
